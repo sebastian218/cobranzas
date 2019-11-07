@@ -205,7 +205,7 @@ class Facturas extends React.Component {
                     <tbody id="wrapper">{this.props.facturas.map((item, key) => (
                         <Fragment>
                             <tr key={'' + key} style={{ backgroundColor: item.isSupplierValid ? "rgba(240,128,128,0.3)" : "" }}>
-                                <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="40px" src="./Spinner.svg" /> : <img id="chevron" className={(item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="40px" src="./up-chevron.svg" />}  </td>
+                                <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="30px" src="./Spinner.svg" /> : <img  className={" "+(item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="30px" src="./up-chevron.svg" />}  </td>
                                 <td>{item.cuitEmisor}</td>
                                 <td>{item.razonSocialEmi}</td>
                                 <td>{item.codTipoCmp}</td>
@@ -229,7 +229,7 @@ class Facturas extends React.Component {
                                 <tr id={item.cuitEmisor} ref={this.state.content} className=" p-0 " >
                                     <td colSpan={17} className="p-0">
                                         <div className="x-auto ">
-                                            <small className="text-secondary">Comprobantes Asociados a la factura de crédito</small>
+                                             <small className="text-secondary">Comprobantes Asociados ala factura de crédito</small>
                                             <table className="table ">
                                                 <thead>
                                                     <tr>
