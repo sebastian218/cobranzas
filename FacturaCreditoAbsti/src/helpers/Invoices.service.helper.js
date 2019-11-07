@@ -12,33 +12,38 @@ export default class InvoiceService {
     }
 
     getInvoices(rowsPerPage = 2, page = 1, searchValues) {
-
+        
         let data = [];
-        let searchInputs = Object.keys(searchValues);
-        this.pendingVoices.forEach(invoice => {
-            let match = 0;
-            searchInputs.forEach(e => {
-                
-                if (e != "tipoFecha" && e != "desde" && e != "hasta") {
-                    if (e == "estado") {
-                        return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
-                    } else {
-                        return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+
+        if (searchValues) {
+            let searchInputs = Object.keys(searchValues);
+            this.pendingVoices.forEach(invoice => {
+                let match = 0;
+                searchInputs.forEach(e => {
+
+                    if (e != "tipoFecha" && e != "desde" && e != "hasta") {
+                        if (e == "estado") {
+                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
+                        } else {
+                            return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+                        }
                     }
+                })
+                if (match == searchInputs.length - 3 && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]], searchValues["desde"], searchValues["hasta"])) {
+                    data.push(invoice);
                 }
-            })
-            if (match == searchInputs.length-3 && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]],searchValues["desde"],searchValues["hasta"])) {
-                data.push(invoice);
-            }
-        });
+            });
+        } else {
+            data = this.pendingVoices;
+        }
 
         return this.paginator(data, page, rowsPerPage);
     }
 
     isBetweenSelectedDates(fecha, desde, hasta) {
-        
+
         let fechaAux = new Date(fecha);
-        
+
         if (hasta == null && desde == null) {
             return true
         } else if (hasta == null) {

@@ -174,6 +174,10 @@ class Filters extends React.Component {
 
         this.props.setAllPendingInvoices(allPendingInvoicesAux);
         this.props.setAllInvoices(allInvoicesAux);
+        let data = new InvoiceService().getInvoices(2, 1, null)
+
+        console.log(data);
+
     }
 
     render() {

@@ -4,13 +4,18 @@ import checkConnectionReducer from './checkConnection.reducer';
 import appReducer from './app.reducer';
 import errorsReducer from './errors.reducer';
 import messagesReducer from './messages.reducer';
+import tableParamsReducer from './tableParams.reducer';
+
 
 
 export default combineReducers({
-             invoiceReducer,
+             
+            invoiceReducer,
              checkConnectionReducer,
              appReducer,
              errorsReducer,
-             messagesReducer
+             messagesReducer,
+             tableParamsReducer
+             
 });
 
