@@ -15,7 +15,7 @@ import { onlyNumbres } from '../helpers/helpers';
 import { setAllInvoices, setAllPendingInvoices, setFilteredPendingInvoices, setFilteredInvoices } from '../redux/actions/invoice';
 import { createMessage } from '../redux/actions/alerts.actions';
 import { ALERT } from '../constants/alertsTypes';
-import  InvoiceService  from '../helpers/Invoices.service.helper';
+import InvoiceService from '../helpers/Invoices.service.helper';
 registerLocale('es', es)
 setDefaultLocale('es');
 
@@ -50,36 +50,47 @@ class Filters extends React.Component {
         const { allPendingInvoicesAux, allInvoicesAux } = this.props.invoiceReducer;
 
         if (!this.isInvalidForm()) {
-            
+
             let searchValues = this.returnSearchInputs();
             let searchInputs = Object.keys(searchValues);
             let allPendingFiltered = [];
             let allInvoicesFiltered = []
-            let data = new InvoiceService().getInvoices(2,1,searchValues)
-                console.log(data);
+            let searchvalsAux = searchValues;
+            searchvalsAux["desde"] =desde ;
+            searchvalsAux["hasta"]= hasta ;
+           
+            let data = new InvoiceService().getInvoices(2, 1, searchvalsAux)
+
+            console.log(data);
             allPendingInvoicesAux.forEach(invoice => {
                 let match = 0;
                 searchInputs.forEach(e => {
-                    if (e == "estado") {
-                        return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
-                    } else {
-                        return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : ""; 
+                    if (e != "tipoFecha") {
+                        if (e == "estado") {
+                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
+                        } else {
+                            return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+                        }
                     }
+
                 })
-                if (match == searchInputs.length && this.isBetweenSelectedDates(invoice[tipoFecha])) {
+                if (match == searchInputs.length-1 && this.isBetweenSelectedDates(invoice[tipoFecha])) {
                     allPendingFiltered.push(invoice);
                 }
             });
             allInvoicesAux.forEach(invoice => {
                 let match = 0;
                 searchInputs.forEach(e => {
-                    if (e == "estado") {
-                        return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
-                    } else {
-                        return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+                    if (e != "tipoFecha") {
+                        if (e == "estado") {
+                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
+                        } else {
+                            return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+                        }
                     }
+
                 })
-                if (match == searchInputs.length && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]])) {
+                if (match == searchInputs.length-1 && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]])) {
                     allInvoicesFiltered.push(invoice);
                 }
             });
@@ -105,7 +116,7 @@ class Filters extends React.Component {
         if (estado != SELECCIONE) {
             search["estado"] = estado;
         }
-        if(tipoFecha != SELECCIONE){
+        if (tipoFecha != SELECCIONE) {
             search["tipoFecha"] = tipoFecha;
         }
         return search;
@@ -151,7 +162,7 @@ class Filters extends React.Component {
     }
     handleLimpiar() {
         const { allPendingInvoicesAux, allInvoicesAux } = this.props.invoiceReducer
-       
+
         this.setState({
             empresa: "",
             cuit: "",
@@ -204,13 +215,13 @@ class Filters extends React.Component {
                         </Form.Group>
                         <Form.Group as={Col} md="2" controlId="formGridCity">
                             <Form.Label>Desde</Form.Label>
-                            <div className="w-100 date-border " style={{backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : ""}}>
+                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : "" }}>
                                 <DatePicker locale="es" dateFormat='dd/MM/yyyy' disabled={tipoFecha == SELECCIONE} placeholderText="Seleccione fecha" onChange={this.desdeDateChange} value={desde} selected={desde} name="desde" className="form-control w-100" />
                             </div>
                         </Form.Group>
                         <Form.Group as={Col} md="2" controlId="formGridCity">
                             <Form.Label>Hasta</Form.Label>
-                            <div className="w-100 date-border " style={{backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : ""}}>
+                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : "" }}>
                                 <DatePicker locale="es" dateFormat='dd/MM/yyyy' disabled={tipoFecha == SELECCIONE} placeholderText="Seleccione fecha" onChange={this.hastaDateChange} value={hasta} selected={hasta} name="hasta" className="form-control w-100" />
                             </div>
                         </Form.Group>
