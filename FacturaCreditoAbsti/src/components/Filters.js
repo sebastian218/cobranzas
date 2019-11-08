@@ -20,7 +20,9 @@ registerLocale('es', es)
 setDefaultLocale('es');
 
 
-const SELECCIONE = "Seleccionar..."
+const SELECCIONE = "Seleccionar...";
+const ESTADOPLACEHOLDER = "Estado";
+const FECHAPLACEHOLDER = "Tipo Fecha";
 class Filters extends React.Component {
     constructor(props) {
         super(props);
@@ -28,8 +30,8 @@ class Filters extends React.Component {
         this.state = {
             empresa: "",
             cuit: "",
-            estado: SELECCIONE,
-            tipoFecha: SELECCIONE,
+            estado: ESTADOPLACEHOLDER,
+            tipoFecha: FECHAPLACEHOLDER,
             desde: null,
             hasta: null,
 
@@ -55,48 +57,15 @@ class Filters extends React.Component {
             let searchInputs = Object.keys(searchValues);
             let allPendingFiltered = [];
             let allInvoicesFiltered = []
-            let searchvalsAux = searchValues;
+            let searchvalsAux = {...searchValues};
             searchvalsAux["desde"] =desde ;
             searchvalsAux["hasta"]= hasta ;
            
-            let data = new InvoiceService().getInvoices(2, 1, searchvalsAux)
+            let serviceData = new InvoiceService().getInvoices(2, 1, searchvalsAux)
 
-            console.log(data);
-            allPendingInvoicesAux.forEach(invoice => {
-                let match = 0;
-                searchInputs.forEach(e => {
-                    if (e != "tipoFecha") {
-                        if (e == "estado") {
-                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
-                        } else {
-                            return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
-                        }
-                    }
-
-                })
-                if (match == searchInputs.length-1 && this.isBetweenSelectedDates(invoice[tipoFecha])) {
-                    allPendingFiltered.push(invoice);
-                }
-            });
-            allInvoicesAux.forEach(invoice => {
-                let match = 0;
-                searchInputs.forEach(e => {
-                    if (e != "tipoFecha") {
-                        if (e == "estado") {
-                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
-                        } else {
-                            return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
-                        }
-                    }
-
-                })
-                if (match == searchInputs.length-1 && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]])) {
-                    allInvoicesFiltered.push(invoice);
-                }
-            });
-
-            this.props.setFilteredAllInvoices(allInvoicesFiltered);
-            this.props.setFilteredPendingInvoices(allPendingFiltered);
+            console.log(serviceData);
+            /* this.props.setFilteredAllInvoices(allInvoicesFiltered); */
+            this.props.setFilteredPendingInvoices(serviceData.data);
         } else {
             this.props.createAlert("Debe ingresar un parametro de busqueda", ALERT);
         }
@@ -113,16 +82,17 @@ class Filters extends React.Component {
         if (cuit != "") {
             search['cuitEmisor'] = cuit;
         }
-        if (estado != SELECCIONE) {
+        if (estado != ESTADOPLACEHOLDER) {
             search["estado"] = estado;
         }
-        if (tipoFecha != SELECCIONE) {
+        if (tipoFecha != FECHAPLACEHOLDER) {
             search["tipoFecha"] = tipoFecha;
         }
         return search;
     }
 
     isBetweenSelectedDates(fecha) {
+        
         const { desde, hasta } = this.state;
         let fechaAux = new Date(fecha);
         if (hasta == null && desde == null) {
@@ -139,7 +109,7 @@ class Filters extends React.Component {
     }
     isInvalidForm() {
         const { empresa, cuit, estado, tipoFecha, desde, hasta } = this.state;
-        return empresa == "" && cuit == "" && estado == SELECCIONE && tipoFecha == SELECCIONE && desde == null && hasta == null;
+        return empresa == "" && cuit == "" && estado == ESTADOPLACEHOLDER && tipoFecha == FECHAPLACEHOLDER && desde == null && hasta == null;
     }
     onChange = e => {
         let value = e.target.value;
@@ -166,15 +136,15 @@ class Filters extends React.Component {
         this.setState({
             empresa: "",
             cuit: "",
-            estado: SELECCIONE,
-            tipoFecha: SELECCIONE,
+            estado: ESTADOPLACEHOLDER,
+            tipoFecha: FECHAPLACEHOLDER,
             desde: null,
             hasta: null,
         })
-
-        this.props.setAllPendingInvoices(allPendingInvoicesAux);
-        this.props.setAllInvoices(allInvoicesAux);
         let data = new InvoiceService().getInvoices(2, 1, null)
+        this.props.setAllPendingInvoices(data.data);
+        this.props.setAllInvoices(allInvoicesAux);
+        
 
         console.log(data);
 
@@ -183,23 +153,23 @@ class Filters extends React.Component {
     render() {
         const { empresa, cuit, estado, tipoFecha, desde, hasta } = this.state;
         return (
-            <div className="p-2 filter-wrapper">
-                <Form className="filter-form" autoComplete="off" onSubmit={this.onSubmit}>
+            <div className="">
+                <Form className="" autoComplete="off" onSubmit={this.onSubmit}>
                     <Form.Row>
                         <Form.Group as={Col} md="2" controlId="formGridEmail">
-                            <Form.Label>Empresa</Form.Label>
+                            {/* <Form.Label>Empresa</Form.Label> */}
                             <Form.Control onChange={this.onChange} value={empresa} type="text" placeholder="Ingresar Empresa" name="empresa" />
                         </Form.Group>
 
                         <Form.Group as={Col} md="2" controlId="formGridPassword">
-                            <Form.Label>Cuit</Form.Label>
+                            {/* <Form.Label>Cuit</Form.Label> */}
                             <Form.Control onChange={this.onChange} value={cuit} type="text" placeholder="Ingresar Cuit" name="cuit" />
                         </Form.Group>
 
                         <Form.Group as={Col} md="2" controlId="formGridState" >
-                            <Form.Label>Estado</Form.Label>
+                            {/* <Form.Label>Estado</Form.Label> */}
                             <Form.Control onChange={this.onChange} value={estado} as="select" name="estado">
-                                <option disabled>Seleccionar...</option>
+                                <option disabled>{ESTADOPLACEHOLDER}</option>
                                 <option value={valuesEnum.pendienteRecepcion}>Pendiente Recepción</option>
                                 <option value={valuesEnum.recepcionado}>Recepcionado</option>
                                 <option value={valuesEnum.aceptado}>Aceptado</option>
@@ -208,40 +178,51 @@ class Filters extends React.Component {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group as={Col} md="2" controlId="formGridState">
-                            <Form.Label>Tipo Fecha</Form.Label>
+                            {/* <Form.Label>Tipo Fecha</Form.Label> */}
                             <Form.Control onChange={this.onChange} value={tipoFecha} as="select" name="tipoFecha">
-                                <option disabled>Seleccionar...</option>
+                                <option disabled>{FECHAPLACEHOLDER}</option>
                                 <option value={valuesEnum.emision}>Emisión</option>
                                 <option value={valuesEnum.disponibilidad}>Disponibilidad</option>
                                 <option value={valuesEnum.vencimiento}>Vencimiento</option>
                                 <option value={valuesEnum.aceptacion}>Aceptación</option>
                             </Form.Control>
                         </Form.Group>
-                        <Form.Group as={Col} md="2" controlId="formGridCity">
-                            <Form.Label>Desde</Form.Label>
-                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : "" }}>
-                                <DatePicker locale="es" dateFormat='dd/MM/yyyy' disabled={tipoFecha == SELECCIONE} placeholderText="Seleccione fecha" onChange={this.desdeDateChange} value={desde} selected={desde} name="desde" className="form-control w-100" />
+                        <Form.Group as={Col} md="1" controlId="formGridCity">
+                            {/* <Form.Label>Desde</Form.Label> */}
+                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == FECHAPLACEHOLDER ? "#e9ecef" : "" }}>
+                                <DatePicker locale="es" dateFormat='dd/MM/yy' disabled={tipoFecha == FECHAPLACEHOLDER} placeholderText="Desde" onChange={this.desdeDateChange} value={desde} selected={desde} name="desde" className="form-control w-100" />
                             </div>
                         </Form.Group>
-                        <Form.Group as={Col} md="2" controlId="formGridCity">
-                            <Form.Label>Hasta</Form.Label>
-                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == SELECCIONE ? "#e9ecef" : "" }}>
-                                <DatePicker locale="es" dateFormat='dd/MM/yyyy' disabled={tipoFecha == SELECCIONE} placeholderText="Seleccione fecha" onChange={this.hastaDateChange} value={hasta} selected={hasta} name="hasta" className="form-control w-100" />
+                        <Form.Group as={Col} md="1" controlId="formGridCity">
+                            {/* <Form.Label>Hasta</Form.Label> */}
+                            <div className="w-100 date-border " style={{ backgroundColor: tipoFecha == FECHAPLACEHOLDER ? "#e9ecef" : "" }}>
+                                <DatePicker locale="es" dateFormat='dd/MM/yy' disabled={tipoFecha == FECHAPLACEHOLDER} placeholderText="Hasta" onChange={this.hastaDateChange} value={hasta} selected={hasta} name="hasta" className="form-control w-100" />
                             </div>
                         </Form.Group>
+                        <Form.Group as={Col} md="1">
+                        <Button  variant="primary" type="submit" className="w-100">
+                            Buscar
+                        </Button>
+                        </Form.Group >
+                        <Form.Group as={Col} md="1">
+                        <Button className="w-100" variant="outline-secondary" type="button" onClick={() => this.handleLimpiar()}>
+                            Limpiar
+                        </Button>
+                        </Form.Group >
+                        
 
                     </Form.Row>
-                    <Row className="justify-content-md-end pb-0 pr-4 pl-4  pt-0">
+{/*                     <Row className="justify-content-md-end pb-0 pr-4 pl-4  pt-0">
 
-                        <Button variant="primary" type="submit" className="mr-2">
+                        <Button  variant="primary" type="submit" className="mr-2 btn btn-sm">
                             Buscar
                              </Button>
 
-                        <Button variant="outline-secondary" type="button" onClick={() => this.handleLimpiar()}>
+                        <Button className="btn-sm" variant="outline-secondary" type="button" onClick={() => this.handleLimpiar()}>
                             Limpiar
                         </Button>
 
-                    </Row>
+                    </Row> */}
 
                 </Form>
             </div>

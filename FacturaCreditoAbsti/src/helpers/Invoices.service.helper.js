@@ -19,8 +19,11 @@ export default class InvoiceService {
             let searchInputs = Object.keys(searchValues);
             this.pendingVoices.forEach(invoice => {
                 let match = 0;
+                let fechaInputs = 0;
                 searchInputs.forEach(e => {
-
+                     if( e == "tipoFecha" || e == "desde" ||e == "hasta"){
+                        fechaInputs++
+                     }
                     if (e != "tipoFecha" && e != "desde" && e != "hasta") {
                         if (e == "estado") {
                             return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
@@ -29,7 +32,9 @@ export default class InvoiceService {
                         }
                     }
                 })
-                if (match == searchInputs.length - 3 && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]], searchValues["desde"], searchValues["hasta"])) {
+                 
+                
+                if (match == searchInputs.length - fechaInputs && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]], searchValues["desde"], searchValues["hasta"])) {
                     data.push(invoice);
                 }
             });

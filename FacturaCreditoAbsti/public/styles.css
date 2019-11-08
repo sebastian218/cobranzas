@@ -41,7 +41,7 @@ div .react-datepicker__input-container input :hover{
     box-shadow: -1px 9px 18px -4px rgba(0,0,0,0.18);
 }
 .x-auto{
-    overflow-x: auto !important;
+    overflow-x: scroll !important;
 }
 .loading-gif{
     display: flex;
@@ -58,6 +58,10 @@ div .react-datepicker__input-container input :hover{
 }
 .aceptacion-modal{
    
+}
+.tabla-facturas{
+    white-space: nowrap;
+    font-size: .875rem !important;
 }
 .td-resumen{
     display: flex;

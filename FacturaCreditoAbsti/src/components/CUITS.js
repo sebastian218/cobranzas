@@ -129,7 +129,7 @@ class Cuits extends React.Component {
                             />
                         )) : ""}
                     </div>
-                    {invoicesLoaded ? <Filters /> : ""}
+                    {/*  {invoicesLoaded ? <Filters /> : ""}  */}
                     {invoicesLoaded ?
                         <Tabs className="mt-4" defaultActiveKey="pendientes" id="uncontrolled-tab-example">
                             <Tab eventKey="pendientes" title="Pendientes">
