@@ -1,6 +1,7 @@
 import { SET_INVOICE } from "./types"
 import { SET_ALLINVOICES, SET_ALLPENDINGINVOICES, FILTERED_ALLINVOICES, FILTERED_PENDINGINVOICES } from "../constants/invoices.constants";
-import { invoiceResponse, GetAllInvoices } from '../../constants/axiosResponse';
+import { invoiceResponse, GetAllInvoices, allPendingClon } from '../../constants/axiosResponse';
+
 import axios from 'axios';
 
 
@@ -133,7 +134,7 @@ export function getAllPendingInvoices(cuit) {
     //MOCK DATOS
 
     return new Promise((resolve, reject) => {
-        invoiceResponse.data.data.arrayComprobantes.forEach((e, index) => {
+        allPendingClon.data.data.arrayComprobantes.forEach((e, index) => {
             if (e.estado.estado != "Pendiente Recepción" && e.estado.estado != "Pendiente" && e.estado.estado != "Recepcionado") {
                 e.StatusHistory = [
                     {
@@ -160,7 +161,7 @@ export function getAllPendingInvoices(cuit) {
                  e.isSupplierValid = isSuppplier
             })
         })
-        resolve(invoiceResponse)
+        resolve(allPendingClon)
     })
 
 

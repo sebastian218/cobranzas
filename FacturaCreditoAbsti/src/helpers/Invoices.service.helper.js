@@ -1,9 +1,10 @@
-import { invoiceResponse, GetAllInvoices } from "../constants/axiosResponse";
+import { invoiceResponse, GetAllInvoices, allPendingClon } from "../constants/axiosResponse";
+
 
 export default class InvoiceService {
 
 
-    pendingVoices = invoiceResponse.data.data.arrayComprobantes;
+    pendingVoices = allPendingClon.data.data.arrayComprobantes;
 
     allInvoices = GetAllInvoices;
 
@@ -11,7 +12,7 @@ export default class InvoiceService {
 
     }
 
-    getInvoices(rowsPerPage = 2, page = 1, searchValues) {
+    getInvoices(rowsPerPage = 5, page = 1, searchValues) {
         
         let data = [];
 

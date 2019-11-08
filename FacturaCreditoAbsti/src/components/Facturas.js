@@ -40,6 +40,7 @@ class Facturas extends React.Component {
             historyData: "",
             selectedInvoice: {},
             documentosAsociados: [],
+            totalPages: 1
 
         }
 
@@ -174,8 +175,9 @@ class Facturas extends React.Component {
     }
     paginationChange(page){
         console.log("FACTURAS RECIBE PAGE", page )
-        let serviceData = new InvoiceService().getInvoices(2, page, null)
+        let serviceData = new InvoiceService().getInvoices(5, page, null)
         console.log(serviceData)
+        this.setState((state) => ({ ...state, totalPages: serviceData.total_pages}));
         this.props.setFilteredPendingInvoices(serviceData.data);
     }
     cancelInvoice() {
@@ -184,7 +186,7 @@ class Facturas extends React.Component {
   
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading } = this.state;
+        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading,totalPages } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
@@ -302,7 +304,7 @@ class Facturas extends React.Component {
                         </select>
                     </div>
                     <div className="">
-                    <TablePagination amountPages={2} selectionChanges={(e) => this.paginationChange(e)}/>
+                    <TablePagination amountPages={totalPages} selectionChanges={(e) => this.paginationChange(e)}/>
                     </div>
                 </div>
             </div>
