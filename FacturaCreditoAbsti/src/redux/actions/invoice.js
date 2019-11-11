@@ -38,40 +38,44 @@ export function setFilteredPendingInvoices(allPendingInvoices) {
 // A PARTIR DE ACÁ NO SON METODOS PARA REDUX 
 
 //GET ALL INVOICES
-export function getAllInvoices(cuit) {
+export function getAllInvoices(cuit,per_page, page, search_params) {
 
     //MOCK DATOS
 
     return new Promise((resolve, reject) => {
-        GetAllInvoices.data.data.arrayComprobantes.forEach((e, index) => {
-            isSupplierValid(e)
-                .then(isSuppplier =>{
-                     e.isSupplierValid = isSuppplier
-                });
-            if (e.estado.estado != "Pendiente Recepción" && e.estado.estado != "Pendiente" && e.estado.estado != "Recepcionado") {
-                /* console.log(e.estado.estado) */
-                e.StatusHistory = [
-                    {
-                        "Usuario": "Pedro " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Recepcionado"
-                    },
-                    {
-                        "Usuario": "Maria " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Aceptado"
-                    },
-                    {
-                        "Usuario": "Jose " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Rechazado"
-                    },
-                ]
-            } else {
-                e.StatusHistory = [];
-            }
+        const response = new InvoiceService()
+        response.getAllInvoices(per_page , page , search_params).then(res =>{
+            res.data.forEach((e, index) => {
+                isSupplierValid(e)
+                    .then(isSuppplier =>{
+                         e.isSupplierValid = isSuppplier
+                    });
+                if (e.estado.estado != "Pendiente Recepción" && e.estado.estado != "Pendiente" && e.estado.estado != "Recepcionado") {
+                    /* console.log(e.estado.estado) */
+                    e.StatusHistory = [
+                        {
+                            "Usuario": "Pedro " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Recepcionado"
+                        },
+                        {
+                            "Usuario": "Maria " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Aceptado"
+                        },
+                        {
+                            "Usuario": "Jose " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Rechazado"
+                        },
+                    ]
+                } else {
+                    e.StatusHistory = [];
+                }
+            })
+            resolve(res)
         })
-        resolve(GetAllInvoices)
+        
     })
 
     /*  return new Promise((resolve, reject) => {

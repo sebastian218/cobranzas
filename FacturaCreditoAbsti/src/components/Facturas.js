@@ -41,7 +41,7 @@ class Facturas extends React.Component {
             selectedInvoice: {},
             documentosAsociados: [],
             totalPages: 0,
-            searchParams:null,
+            searchParams: null,
             amountPerPage: 5,
             selectedPage: 1
 
@@ -61,19 +61,19 @@ class Facturas extends React.Component {
         this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
         this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
         this.getPaginationParams = this.getPaginationParams.bind(this)
-       
+
     }
 
-    componentDidMount(){
-        const{amount_pages} = this.props;
-        this.setState((state) => ({ ...state, totalPages: amount_pages}));
+    componentDidMount() {
+        const { amount_pages } = this.props;
+        this.setState((state) => ({ ...state, totalPages: amount_pages }));
     }
-    componentDidUpdate(prevProps){
-        const {cuit,amount_pages} = this.props;
-        if(prevProps.cuit != cuit){
-             this.setState((state)=>({...state, searchParams: null, amountPerPage: 5,totalPages: amount_pages}));
+    componentDidUpdate(prevProps) {
+        const { cuit, amount_pages } = this.props;
+        if (prevProps.cuit != cuit) {
+            this.setState((state) => ({ ...state, searchParams: null, amountPerPage: 5, totalPages: amount_pages }));
         }
-   }  
+    }
 
     handleOpenRejectForm(item, actionType) {
         this.createDetalle(item);
@@ -187,159 +187,164 @@ class Facturas extends React.Component {
             }, 2000)
         })
     }
-     getSearchValues(e){
-        const {searchParams, amountPerPage} = this.state;
-        this.setState((state)=>({...state, searchParams: e}))
+    getSearchValues(e) {
+        const { searchParams, amountPerPage } = this.state;
+        this.setState((state) => ({ ...state, searchParams: e }))
         getAllPendingInvoices(null, amountPerPage, 1, e).then(res => {
-            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
+            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
             this.props.setFilteredPendingInvoices(res.data);
-        }) 
-    }
-    
-    paginationChange(page){
-        
-        const {searchParams, amountPerPage} = this.state;
-        this.setState((state)=>({...state, selectedPage: page}))
-        getAllPendingInvoices(null,amountPerPage, page, searchParams).then(res => {
-
-            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
-            this.props.setFilteredPendingInvoices(res.data);
-        }) 
+        })
     }
 
-    handleAmountPagesChange(e){
-        const {searchParams} = this.state;
+    paginationChange(page) {
+
+        const { searchParams, amountPerPage } = this.state;
+        this.setState((state) => ({ ...state, selectedPage: page }))
+        getAllPendingInvoices(null, amountPerPage, page, searchParams).then(res => {
+
+            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.props.setFilteredPendingInvoices(res.data);
+        })
+    }
+
+    handleAmountPagesChange(e) {
+        const { searchParams } = this.state;
         let perPage = Number(e.target.value)
-        this.setState((state)=>({...state, amountPerPage:perPage}))
-        getAllPendingInvoices(null,perPage, 1, searchParams).then(res => {
-            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
+        this.setState((state) => ({ ...state, amountPerPage: perPage }))
+        getAllPendingInvoices(null, perPage, 1, searchParams).then(res => {
+            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
             this.props.setFilteredPendingInvoices(res.data);
-        }) 
+        })
 
     }
-    getPaginationParams(){
-        const {searchParams,amountPerPage,selectedPage} = this.state;
-            return {
-                 searchParams: searchParams,
-                 per_page: amountPerPage,
-                 page: selectedPage
-            }
+    getPaginationParams() {
+        const { searchParams, amountPerPage, selectedPage } = this.state;
+        return {
+            searchParams: searchParams,
+            per_page: amountPerPage,
+            page: selectedPage
+        }
     }
     cancelInvoice() {
 
     }
-  
+
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading,totalPages, amountPerPage } = this.state;
+        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
                 <div>
                     {this.props.showActions ? <div><AceptacionForm paginationParms={this.getPaginationParams()} cuit={this.props.cuit} open={openAcceptForm} handleClose={(close) => this.closeAcceptForm(close)} /> <RejectForm paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectForm} actionType={rejectType} open={openRejectForm} /> </div> : ""}
-                    {historyData != "" ? <StatusHistory  open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
+                    {historyData != "" ? <StatusHistory open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
                 </div>
                 <div className="p-1">
-                <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
-                <Filters emitSearchValues={(e)=>{this.getSearchValues(e)}} />
-                <div className="x-auto">
-                <table className="table mt-3 table-sm tabla-facturas">
-                    <thead className="bg-lightGrey">
-                        <tr >
-                            <th className="bt-none"></th>
-                            <th className="bt-none">CUIT Emisor</th>
-                            <th className="bt-none">Razón Social</th>
-                            <th className="bt-none">Tipo Doc.</th>
-                            <th className="bt-none">Pto Vta</th>
-                            <th className="bt-none">Nro</th>
-                            <th className="bt-none">Importe</th>
-                            <th className="bt-none">Moneda</th>
-                            <th className="bt-none">Cot</th>
-                            <th className="bt-none">Estado</th>
-                            <th className="bt-none">Fecha Em</th>
-                            <th className="bt-none">Fecha Disp</th>
-                            <th className="bt-none">Fecha Vto</th>
-                            <th className="bt-none">Fecha Vto Acept</th>
-                            <th className="bt-none">CAE</th>
-                            <th className="bt-none"></th>
-                            <th className="bt-none"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="wrapper">{this.props.facturas.map((item, key) => (
-                        <Fragment>
-                            <tr key={'' + key} style={{ backgroundColor: item.isSupplierValid ? "rgba(240,128,128,0.3)" : "" }}>
-                                <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="30px" src="./Spinner.svg" /> : <img  className={" "+(item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="30px" src="./up-chevron.svg" />}  </td>
-                                <td>{item.cuitEmisor}</td>
-                                <td>{item.razonSocialEmi}</td>
-                                <td>{item.codTipoCmp}</td>
-                                <td>{item.ptovta}</td>
-                                <td>{item.nroCmp}</td>
-                                <td>{item.importeTotal}</td>
-                                <td>{item.importecodMoneda}</td>
-                                <td>{item.cotizacionMoneda}</td>
-                                <td> {item.StatusHistory.length > 0 ? <a href="#" onClick={() => this.openStatusHistory(item.StatusHistory)}>{item.estado.estado}</a> : item.estado.estado}</td>
-                                <td>{Moment(item.fechaEmision).format('DD/MM/YY')}</td>
-                                <td>{Moment(item.fechaPuestaDispo).format('DD/MM/YY')}</td>
-                                <td>{Moment(item.fechaVenPago).format('DD/MM/YY')}</td>
-                                <td>{Moment(item.fechaVenAcep).format('DD/MM/YY')}</td>
-                                <td>{item.codAutorizacion}</td>
-                                <td colSpan={2}>
-                                    {item.estado.estado == 'Recepcionado' ? <Actions showReject={true} showCancel={true} showAccept={true} openReject={() => this.handleOpenRejectForm(item, 'R')} openCancel={() => this.handleOpenRejectForm(item, 'C')} openAccept={() => this.openAcceptForm(item)} /> : ""}
-                                </td>
-                            </tr >
-                            {item.cuitEmisor == selectedInvoiceCuit && !detalleLoading ?
-
-                                <tr id={item.cuitEmisor} ref={this.state.content} className=" p-0 " >
-                                    <td colSpan={17} className="p-0">
-                                        <div className="x-auto ">
-                                             <small className="text-secondary">Comprobantes Asociados a la factura de crédito</small>
-                                            <table className="table table-sm tabla-facturas ">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">Tipo Doc</th>
-                                                        <th scope="col">Pto.Vta.</th>
-                                                        <th scope="col">Número</th>
-                                                        <th scope="col">Importe</th>
-                                                        <th scope="col">Moneda</th>
-                                                        <th scope="col">Cotización</th>
-                                                        <th scope="col">Estado</th>
-                                                        <th></th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {documentosAsociados.map((doc, index) => (
-                                                        <tr key={doc.cuitEmisor + index}>
-                                                            <td>{tiposFCE[doc.codTipoCmp]}</td>
-                                                            <td>{doc.ptovta}</td>
-                                                            <td>{doc.nroCmp}</td>
-                                                            <td>{doc.importeTotal}</td>
-                                                            <td>{doc.codMoneda}</td>
-                                                            <td>{doc.cotizacionMoneda}</td>
-                                                            <td>{doc.estado.estado}</td>
-
-                                                            <td > 
-                                                            <Actions showReject={true} openReject={() => this.handleOpenRejectForm(doc, 'R')} />
-                                                            </td>
-
-                                                        </tr>
-                                                    ))}
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </td>
+                    <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
+                    <Filters emitSearchValues={(e) => { this.getSearchValues(e) }} />
+                    <div className="x-auto">
+                        <table className="table mt-3 table-sm tabla-facturas">
+                            <thead className="bg-lightGrey">
+                                <tr >
+                                    <th className="bt-none"></th>
+                                    <th className="bt-none">CUIT Emisor</th>
+                                    <th className="bt-none">Razón Social</th>
+                                    <th className="bt-none">Tipo Doc.</th>
+                                    <th className="bt-none">Pto Vta</th>
+                                    <th className="bt-none">Nro</th>
+                                    <th className="bt-none">Importe</th>
+                                    <th className="bt-none">Moneda</th>
+                                    <th className="bt-none">Cot</th>
+                                    <th className="bt-none">Estado</th>
+                                    <th className="bt-none">Fecha Em</th>
+                                    <th className="bt-none">Fecha Disp</th>
+                                    <th className="bt-none">Fecha Vto</th>
+                                    <th className="bt-none">Fecha Vto Acept</th>
+                                    <th className="bt-none">CAE</th>
+                                    <th className="bt-none"></th>
+                                    <th className="bt-none"></th>
                                 </tr>
+                            </thead>
+                            {this.props.facturas.length == 0 ? <tbody><tr colSpan={17}> <strong>No se ecnotraron resultados</strong> </tr></tbody> :
 
-                                : ""}
+                                <tbody id="wrapper">{this.props.facturas.map((item, key) => (
+                                    <Fragment>
+                                        <tr key={'' + key} style={{ backgroundColor: item.isSupplierValid ? "rgba(240,128,128,0.3)" : "" }}>
+                                            <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="20px" src="./Spinner.svg" /> : <img className={" " + (item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="20px" src="./up-chevron.svg" />}  </td>
+                                            <td>{item.cuitEmisor}</td>
+                                            <td>{item.razonSocialEmi}</td>
+                                            <td>{item.codTipoCmp}</td>
+                                            <td>{item.ptovta}</td>
+                                            <td>{item.nroCmp}</td>
+                                            <td>{item.importeTotal}</td>
+                                            <td>{item.importecodMoneda}</td>
+                                            <td>{item.cotizacionMoneda}</td>
+                                            <td> {item.StatusHistory.length > 0 ? <a href="#" onClick={() => this.openStatusHistory(item.StatusHistory)}>{item.estado.estado}</a> : item.estado.estado}</td>
+                                            <td>{Moment(item.fechaEmision).format('DD/MM/YY')}</td>
+                                            <td>{Moment(item.fechaPuestaDispo).format('DD/MM/YY')}</td>
+                                            <td>{Moment(item.fechaVenPago).format('DD/MM/YY')}</td>
+                                            <td>{Moment(item.fechaVenAcep).format('DD/MM/YY')}</td>
+                                            <td>{item.codAutorizacion}</td>
+                                            <td colSpan={2}>
+                                                {item.estado.estado == 'Recepcionado' ? <Actions showReject={true} showCancel={true} showAccept={true} openReject={() => this.handleOpenRejectForm(item, 'R')} openCancel={() => this.handleOpenRejectForm(item, 'C')} openAccept={() => this.openAcceptForm(item)} /> : ""}
+                                            </td>
+                                        </tr >
+                                        {item.cuitEmisor == selectedInvoiceCuit && !detalleLoading ?
 
-                        </Fragment>
-                    ))}
-                    </tbody>
-                </table>
+                                            <tr id={item.cuitEmisor} ref={this.state.content} className=" p-0 " >
+                                                <td colSpan={17} className="p-0">
+                                                    <div className="x-auto ">
+                                                        <small className="text-secondary">Comprobantes Asociados a la factura de crédito</small>
+                                                        <table className="table table-sm tabla-facturas ">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Tipo Doc</th>
+                                                                    <th scope="col">Pto.Vta.</th>
+                                                                    <th scope="col">Número</th>
+                                                                    <th scope="col">Importe</th>
+                                                                    <th scope="col">Moneda</th>
+                                                                    <th scope="col">Cotización</th>
+                                                                    <th scope="col">Estado</th>
+                                                                    <th></th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {documentosAsociados.map((doc, index) => (
+                                                                    <tr key={doc.cuitEmisor + index}>
+                                                                        <td>{tiposFCE[doc.codTipoCmp]}</td>
+                                                                        <td>{doc.ptovta}</td>
+                                                                        <td>{doc.nroCmp}</td>
+                                                                        <td>{doc.importeTotal}</td>
+                                                                        <td>{doc.codMoneda}</td>
+                                                                        <td>{doc.cotizacionMoneda}</td>
+                                                                        <td>{doc.estado.estado}</td>
+
+                                                                        <td >
+                                                                            <Actions showReject={true} openReject={() => this.handleOpenRejectForm(doc, 'R')} />
+                                                                        </td>
+
+                                                                    </tr>
+                                                                ))}
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            : ""}
+
+                                    </Fragment>
+                                ))}
+                                </tbody>
+
+                            }
+
+                        </table>
+                    </div>
                 </div>
-                </div>                                        
-                
+
                 <div className="d-flex justify-content-between p-1">
                     <div className="form-group">
                         <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPagesChange} value={amountPerPage} >
@@ -349,7 +354,7 @@ class Facturas extends React.Component {
                         </select>
                     </div>
                     <div className="">
-                    <TablePagination amountPages={totalPages} selectionChanges={(e) => this.paginationChange(e)}/>
+                        <TablePagination amountPages={totalPages} selectionChanges={(e) => this.paginationChange(e)} />
                     </div>
                 </div>
             </div>

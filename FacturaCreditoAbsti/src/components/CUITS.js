@@ -24,7 +24,8 @@ class Cuits extends React.Component {
             loading: false,
             cuits: [],
             pendientes: [],
-            pend_pages: 0,
+            total_pend_pages: 0,
+            total_allInv_pages: 0,
             allInvoices: [],
             error: "",
             selectedCuit: "",
@@ -56,17 +57,17 @@ class Cuits extends React.Component {
         this.isLoading(true);
         return new Promise((resolve, reject) => {
             this.setState({ selectedCuit: cuit, selectedName: name });
-            this.props.setSelectedCuit(cuit);
+            this.props.setSelectedCuit(cuit)
             getAllPendingInvoices(cuit)
                 .then(response => {
                     this.props.setAllPendingInvoices(response.data)
-                    this.setState((state)=> ({ allInvoices: response.data, pend_pages: response.total_pages }));
+                    this.setState((state)=> ({...state, pendientes: response.data, total_pend_pages: response.total_pages }));
                     getAllInvoices(cuit)
                         .then(response => {
 
                             setTimeout(()=>{
-                                this.props.setAllInvoices(response.data.data.arrayComprobantes)
-                                this.setState({ pendientes: response.data.data.arrayComprobantes, error: response.data.data.arrayObservaciones });
+                                this.props.setAllInvoices(response.data)
+                                this.setState({ allInvoices: response.data, total_allInv_pages: response.total_pages  });
     
                                 this.setState({ invoicesLoaded: true })
                                 this.isLoading(false);
@@ -111,7 +112,7 @@ class Cuits extends React.Component {
     }
 
     render() {
-        const { pendientes, cuits, selectedCuit, selectedName, invoicesLoaded,loading,pend_pages } = this.state;
+        const { pendientes, cuits, selectedCuit, selectedName, invoicesLoaded,loading,total_pend_pages,total_allInv_pages } = this.state;
 
         if (this.props.checkConnectionReducer.connectionSucces) {
             return (
@@ -138,7 +139,7 @@ class Cuits extends React.Component {
                                 <Facturas
                                     facturas={this.props.invoiceReducer.allPendingInvoices}
                                     cuit={selectedCuit}
-                                    amount_pages={pend_pages}
+                                    amount_pages={total_pend_pages}
                                     rznSocial={selectedName}
                                     obs={this.state.error}
                                     showActions={true}
@@ -148,6 +149,7 @@ class Cuits extends React.Component {
                                 <CuentasCorrientes
                                     facturas={this.props.invoiceReducer.allInvoices}
                                     cuit={selectedCuit}
+                                    amount_pages={total_allInv_pages}
                                     rznSocial={selectedName}
                                     obs={this.state.error}
                                 />

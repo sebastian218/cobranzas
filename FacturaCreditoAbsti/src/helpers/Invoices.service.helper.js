@@ -1,6 +1,8 @@
 import { invoiceResponse, GetAllInvoices, allPendingClon } from "../constants/axiosResponse";
 
 
+
+// MOCK DE SERIVICIO CON PAGINACIÓN 
 export default class InvoiceService {
 
 
@@ -47,6 +49,44 @@ export default class InvoiceService {
        }) 
 
     }
+    
+    //GET ALL INVOICES
+
+    getAllInvoices(rowsPerPage = 5, page = 1, searchValues) {
+        return new Promise ((resolve,reject)=>{
+         let data = [];
+ 
+         if (searchValues != null) {
+             let searchInputs = Object.keys(searchValues);
+             this.allInvoices.data.data.arrayComprobantes.forEach(invoice => {
+                 let match = 0;
+                 let fechaInputs = 0;
+                 searchInputs.forEach(e => {
+                      if( e == "tipoFecha" || e == "desde" ||e == "hasta"){
+                         fechaInputs++
+                      }
+                     if (e != "tipoFecha" && e != "desde" && e != "hasta") {
+                         
+                         if (e == "estado") {
+                             return invoice.estado.estado.toString().toLowerCase().includes(searchValues[e].toLowerCase().trim()) ? match++ : "";
+                         } else {
+                             return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
+                         }
+                     }
+                 })
+                  
+                 
+                 if (match == searchInputs.length - fechaInputs && this.isBetweenSelectedDates(invoice[searchValues["tipoFecha"]], searchValues["desde"], searchValues["hasta"])) {
+                     data.push(invoice);
+                 }
+             });
+         } else {
+             data = this.allInvoices.data.data.arrayComprobantes;
+         }
+         resolve(this.paginator(data, page, rowsPerPage));
+        }) 
+ 
+     }
 
     isBetweenSelectedDates(fecha, desde, hasta) {
 
