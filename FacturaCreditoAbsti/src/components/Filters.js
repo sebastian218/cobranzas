@@ -146,8 +146,10 @@ class Filters extends React.Component {
         this.props.setAllPendingInvoices(data.data);
         this.props.setAllInvoices(allInvoicesAux); */
         
-
-        this.props.emitSearchValues(null)
+        if(!this.isInvalidForm()){
+            this.props.emitSearchValues(null)
+        }
+        
 
     }
 
