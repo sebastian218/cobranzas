@@ -85,14 +85,14 @@ class RejectAsocDocs extends React.Component {
 
     handleRejectInvoice() {
         this.setState({ loading: true })
-        const { cuitEmisor, codTipoCmp, ptovta, nroCmp } = this.props.invoiceReducer.selectedInvoice;
         const { rejectCause, rejectDesc } = this.state;
-        const { paginationParams } = this.props;
+        const { paginationParams ,doc} = this.props;
+            
 
-
-
-
-        this.handleClose()
+        this.reject(doc).then(res=>{
+            this.handleClose()
+        })
+        
 
     }
 
@@ -109,7 +109,7 @@ class RejectAsocDocs extends React.Component {
 
 
 
-    rejectCancelInvoice(requestBody) {
+    reject(requestBody) {
 
         // MOCK
         return new Promise((resolve, reject) => {
@@ -121,8 +121,8 @@ class RejectAsocDocs extends React.Component {
         })
         // SOLUTION
         /*   return new Promise((resolve, reject) => {
-              console.log(this.getRejectCancelEndpoint())
-              axios.post(this.getRejectCancelEndpoint(), requestBody)
+              
+              axios.post("//TODO: endpoint rechazo", requestBody)
                   .then(res => {
                       console.log(res)
                       resolve(res)
@@ -131,9 +131,7 @@ class RejectAsocDocs extends React.Component {
           }) */
     }
 
-    getRejectCancelEndpoint() {
-        return this.props.actionType == "C" ? 'api/AFIP/CancelInvoice/' : 'api/AFIP/RejectInvoice/';
-    }
+  
 
 
 
