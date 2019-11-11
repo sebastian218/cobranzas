@@ -23,6 +23,7 @@ class Cuits extends React.Component {
             loading: false,
             cuits: [],
             pendientes: [],
+            pend_pages: 0,
             allInvoices: [],
             error: "",
             selectedCuit: "",
@@ -57,8 +58,8 @@ class Cuits extends React.Component {
 
             getAllPendingInvoices(cuit)
                 .then(response => {
-                    this.props.setAllPendingInvoices(response.data.data.arrayComprobantes)
-                    this.setState({ allInvoices: response.data.data.arrayComprobantes, error: response.data.data.arrayObservaciones });
+                    this.props.setAllPendingInvoices(response.data)
+                    this.setState((state)=> ({ allInvoices: response.data, pend_pages: response.total_pages }));
                     getAllInvoices(cuit)
                         .then(response => {
 
@@ -109,7 +110,7 @@ class Cuits extends React.Component {
     }
 
     render() {
-        const { pendientes, cuits, selectedCuit, selectedName, invoicesLoaded,loading } = this.state;
+        const { pendientes, cuits, selectedCuit, selectedName, invoicesLoaded,loading,pend_pages } = this.state;
 
         if (this.props.checkConnectionReducer.connectionSucces) {
             return (
@@ -136,6 +137,7 @@ class Cuits extends React.Component {
                                 <Facturas
                                     facturas={this.props.invoiceReducer.allPendingInvoices}
                                     cuit={selectedCuit}
+                                    amount_pages={pend_pages}
                                     rznSocial={selectedName}
                                     obs={this.state.error}
                                     showActions={true}

@@ -38,12 +38,13 @@ class Actions extends React.Component {
 
 
     render() {
+        const {showReject,showCancel,showAccept} = this.props;
         return (
             <React.Fragment>
                 <div className="d-flex  justify-conetent-between align-items-center">
-                    <button type="button" className="btn btn-success btn-sm mb-2 glyphicon glyphicon-ok action-buttons" onClick={() => this.handleClick('A')}>A</button>
-                    <button type="button" className="btn btn-secondary btn-sm mb-2 glyphicon glyphicon-remove action-buttons" onClick={() => this.handleClick('R')}>R</button>
-                    <button type="button" className="btn btn-danger btn-sm mb-2 glyphicon glyphicon-remove action-buttons" onClick={() => this.handleClick('C')}>CT</button>
+                {showAccept ? <button type="button" className="btn btn-success btn-sm mb-2 glyphicon glyphicon-ok action-buttons" onClick={() => this.handleClick('A')}>A</button> : ""}    
+                {showReject ? <button type="button" className="btn btn-secondary btn-sm mb-2 glyphicon glyphicon-remove action-buttons" onClick={() => this.handleClick('R')}>R</button> : ""}   
+                {showCancel ?<button type="button" className="btn btn-danger btn-sm mb-2 glyphicon glyphicon-remove action-buttons" onClick={() => this.handleClick('C')}>CT</button> : ""}   
                 </div>
             </React.Fragment>
         )

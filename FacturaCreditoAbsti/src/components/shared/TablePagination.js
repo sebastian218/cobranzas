@@ -15,7 +15,12 @@ export default class TablePagination extends Component {
         this.createPagination = this.createPagination.bind(this);
     }
 
-
+   componentDidUpdate(prevProps){
+        const {amountPages} = this.props;
+        if(prevProps.amountPages != amountPages){
+             this.setState((state)=>({...state, selectedPage: 1}));
+        }
+   }
     handlePaginationClick(e, type){
         console.log(type)
         
@@ -29,16 +34,23 @@ export default class TablePagination extends Component {
                 
                 let page = Number(e.target.id);
                 this.setState((state) => ({ ...state, selectedPage: page}));
-                this.props.selectionChanges(page);
+                if(page != this.state.selectedPage){
+                    this.props.selectionChanges(page);
+                }
+                
                 break
                 case "first":
                 this.setState((state) => ({ ...state, selectedPage: 1 }));
-                this.props.selectionChanges(1);
-                
+                if(this.selectedPage != 1){
+                    this.props.selectionChanges(1);
+                }
                 break
                 case "last" :
                 this.setState((state) => ({ ...state, selectedPage: amountPages}));
-                this.props.selectionChanges(amountPages);
+                if(amountPages != this.state.selectedPage){
+                    this.props.selectionChanges(amountPages);
+                }
+                
                 
                 break
                 case "prev" :
@@ -80,11 +92,11 @@ export default class TablePagination extends Component {
         return (
             <div>
                             <Pagination>
-                            <Pagination.First name="first" onClick={(e)=>this.handlePaginationClick(e,"first")}  />
+                            <Pagination.First disabled={selectedPage === 1} name="first" onClick={(e)=>this.handlePaginationClick(e,"first")}  />
                             <Pagination.Prev disabled={selectedPage === 1} name="prev" onClick={(e)=>this.handlePaginationClick(e,"prev")} />
                            {(this.createPagination())}
                             <Pagination.Next disabled={selectedPage === amountPages} name="next" onClick={(e)=>this.handlePaginationClick(e,"next")}  />
-                            <Pagination.Last name="last" onClick={(e)=>this.handlePaginationClick(e,"last")} />
+                            <Pagination.Last disabled={selectedPage === amountPages} name="last" onClick={(e)=>this.handlePaginationClick(e,"last")} />
                         </Pagination>
             </div>
         )

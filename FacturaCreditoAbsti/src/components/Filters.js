@@ -61,11 +61,12 @@ class Filters extends React.Component {
             searchvalsAux["desde"] =desde ;
             searchvalsAux["hasta"]= hasta ;
            
-            let serviceData = new InvoiceService().getInvoices(2, 1, searchvalsAux)
-
-            console.log(serviceData);
+            /* let serviceData = new InvoiceService().getInvoices(2, 1, searchvalsAux) */
+            this.props.emitSearchValues(searchvalsAux)
+            console.log("SEARCH VALUES EMITTER",searchvalsAux)
+            /* console.log(serviceData); */
             /* this.props.setFilteredAllInvoices(allInvoicesFiltered); */
-            this.props.setFilteredPendingInvoices(serviceData.data);
+            /* this.props.setFilteredPendingInvoices(serviceData.data); */
         } else {
             this.props.createAlert("Debe ingresar un parametro de busqueda", ALERT);
         }
@@ -141,12 +142,12 @@ class Filters extends React.Component {
             desde: null,
             hasta: null,
         })
-        let data = new InvoiceService().getInvoices(2, 1, null)
+       /*  let data = new InvoiceService().getInvoices(2, 1, null)
         this.props.setAllPendingInvoices(data.data);
-        this.props.setAllInvoices(allInvoicesAux);
+        this.props.setAllInvoices(allInvoicesAux); */
         
 
-        console.log(data);
+        this.props.emitSearchValues(null)
 
     }
 

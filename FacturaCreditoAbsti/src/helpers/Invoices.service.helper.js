@@ -4,7 +4,7 @@ import { invoiceResponse, GetAllInvoices, allPendingClon } from "../constants/ax
 export default class InvoiceService {
 
 
-    pendingVoices = allPendingClon.data.data.arrayComprobantes;
+    pendingVoices = allPendingClon;
 
     allInvoices = GetAllInvoices;
 
@@ -13,12 +13,12 @@ export default class InvoiceService {
     }
 
     getInvoices(rowsPerPage = 5, page = 1, searchValues) {
-        
+       return new Promise ((resolve,reject)=>{
         let data = [];
-
-        if (searchValues) {
+debugger
+        if (searchValues != null) {
             let searchInputs = Object.keys(searchValues);
-            this.pendingVoices.forEach(invoice => {
+            this.pendingVoices.data.data.arrayComprobantes.forEach(invoice => {
                 let match = 0;
                 let fechaInputs = 0;
                 searchInputs.forEach(e => {
@@ -26,8 +26,9 @@ export default class InvoiceService {
                         fechaInputs++
                      }
                     if (e != "tipoFecha" && e != "desde" && e != "hasta") {
+                        debugger
                         if (e == "estado") {
-                            return invoice.estado.estado.toString().includes(searchValues[e].trim()) ? match++ : "";
+                            return invoice.estado.estado.toString().toLowerCase().includes(searchValues[e].toLowerCase().trim()) ? match++ : "";
                         } else {
                             return invoice[e].toString().toLowerCase().includes(searchValues[e].trim().toLowerCase()) ? match++ : "";
                         }
@@ -40,10 +41,11 @@ export default class InvoiceService {
                 }
             });
         } else {
-            data = this.pendingVoices;
+            data = this.pendingVoices.data.data.arrayComprobantes;
         }
+        resolve(this.paginator(data, page, rowsPerPage));
+       }) 
 
-        return this.paginator(data, page, rowsPerPage);
     }
 
     isBetweenSelectedDates(fecha, desde, hasta) {

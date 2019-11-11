@@ -7,7 +7,7 @@ import Actions from './Actions';
 import RejectForm from './RejectForm';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { setInvoice, setFilteredPendingInvoices } from '../redux/actions/invoice';
+import { setInvoice, setFilteredPendingInvoices, getAllPendingInvoices } from '../redux/actions/invoice';
 import StatusHistory from './StatusHistory';
 import AceptacionForm from './Aceptacion/AceptacionForm';
 import LoadingScreen from './shared/LoadingScreen';
@@ -40,7 +40,9 @@ class Facturas extends React.Component {
             historyData: "",
             selectedInvoice: {},
             documentosAsociados: [],
-            totalPages: 1
+            totalPages: 0,
+            searchParams:null,
+            amountPerPage: 5
 
         }
 
@@ -56,10 +58,14 @@ class Facturas extends React.Component {
         this.exportToXLS = this.exportToXLS.bind(this);
         this.paginationChange = this.paginationChange.bind(this);
         this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
+        this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
        
     }
 
-
+    componentDidMount(){
+        const{amount_pages} = this.props;
+        this.setState((state) => ({ ...state, totalPages: amount_pages}));
+    }  
 
     handleOpenRejectForm(item, actionType) {
         this.createDetalle(item);
@@ -173,12 +179,34 @@ class Facturas extends React.Component {
             }, 2000)
         })
     }
+     getSearchValues(e){
+        const {searchParams, amountPerPage} = this.state;
+        this.setState((state)=>({...state, searchParams: e}))
+        getAllPendingInvoices(null, amountPerPage, 1, e).then(res => {
+            console.log("RESPUESTA PAGINADO",res)
+            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
+            this.props.setFilteredPendingInvoices(res.data);
+        }) 
+    }
     paginationChange(page){
         console.log("FACTURAS RECIBE PAGE", page )
-        let serviceData = new InvoiceService().getInvoices(5, page, null)
-        console.log(serviceData)
-        this.setState((state) => ({ ...state, totalPages: serviceData.total_pages}));
-        this.props.setFilteredPendingInvoices(serviceData.data);
+        const {searchParams, amountPerPage} = this.state;
+        getAllPendingInvoices(null,amountPerPage, page, searchParams).then(res => {
+            console.log("RESPUESTA PAGINADO",res)
+            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
+            this.props.setFilteredPendingInvoices(res.data);
+        }) 
+    }
+    handleAmountPagesChange(e){
+        const {searchParams} = this.state;
+        let perPage = Number(e.target.value)
+        this.setState((state)=>({...state, amountPerPage:perPage}))
+        getAllPendingInvoices(null,perPage, 1, searchParams).then(res => {
+            console.log("RESPUESTA PAGINADO",res)
+            this.setState((state) => ({ ...state, totalPages: res.total_pages}));
+            this.props.setFilteredPendingInvoices(res.data);
+        }) 
+
     }
     cancelInvoice() {
 
@@ -196,7 +224,7 @@ class Facturas extends React.Component {
                 </div>
                 <div className="p-1">
                 <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
-                <Filters />
+                <Filters emitSearchValues={(e)=>{this.getSearchValues(e)}} />
                 <div className="x-auto">
                 <table className="table mt-3 table-sm tabla-facturas">
                     <thead className="bg-lightGrey">
@@ -233,13 +261,13 @@ class Facturas extends React.Component {
                                 <td>{item.importecodMoneda}</td>
                                 <td>{item.cotizacionMoneda}</td>
                                 <td> {item.StatusHistory.length > 0 ? <a href="#" onClick={() => this.openStatusHistory(item.StatusHistory)}>{item.estado.estado}</a> : item.estado.estado}</td>
-                                <td>{Moment(item.fechaEmision).format('DD/MM/YYYY')}</td>
-                                <td>{Moment(item.fechaPuestaDispo).format('DD/MM/YYYY')}</td>
-                                <td>{Moment(item.fechaVenPago).format('DD/MM/YYYY')}</td>
-                                <td>{Moment(item.fechaVenAcep).format('DD/MM/YYYY')}</td>
+                                <td>{Moment(item.fechaEmision).format('DD/MM/YY')}</td>
+                                <td>{Moment(item.fechaPuestaDispo).format('DD/MM/YY')}</td>
+                                <td>{Moment(item.fechaVenPago).format('DD/MM/YY')}</td>
+                                <td>{Moment(item.fechaVenAcep).format('DD/MM/YY')}</td>
                                 <td>{item.codAutorizacion}</td>
                                 <td colSpan={2}>
-                                    {item.estado.estado == 'Recepcionado' ? <Actions openReject={() => this.handleOpenRejectForm(item, 'R')} openCancel={() => this.handleOpenRejectForm(item, 'C')} openAccept={() => this.openAcceptForm(item)} /> : ""}
+                                    {item.estado.estado == 'Recepcionado' ? <Actions showReject={true} showCancel={true} showAccept={true} openReject={() => this.handleOpenRejectForm(item, 'R')} openCancel={() => this.handleOpenRejectForm(item, 'C')} openAccept={() => this.openAcceptForm(item)} /> : ""}
                                 </td>
                             </tr >
                             {item.cuitEmisor == selectedInvoiceCuit && !detalleLoading ?
@@ -274,7 +302,7 @@ class Facturas extends React.Component {
                                                             <td>{doc.estado.estado}</td>
 
                                                             <td > 
-                                                            <Actions openReject={() => this.handleOpenRejectForm(item, 'R')} openCancel={() => this.handleOpenRejectForm(item, 'C')} openAccept={() => this.openAcceptForm(item)} />
+                                                            <Actions showReject={true} openReject={() => this.handleOpenRejectForm(doc, 'R')} />
                                                             </td>
 
                                                         </tr>
@@ -297,10 +325,10 @@ class Facturas extends React.Component {
                 
                 <div className="d-flex justify-content-between p-1">
                     <div className="form-group">
-                        <select className="custom-select my-1 mr-sm-2" >
-                            <option value="1">5</option>
-                            <option value="2">10</option>
-                            <option value="3">20</option>
+                        <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPagesChange} >
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
                         </select>
                     </div>
                     <div className="">

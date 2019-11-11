@@ -1,8 +1,8 @@
 import { SET_INVOICE } from "./types"
 import { SET_ALLINVOICES, SET_ALLPENDINGINVOICES, FILTERED_ALLINVOICES, FILTERED_PENDINGINVOICES } from "../constants/invoices.constants";
 import { invoiceResponse, GetAllInvoices, allPendingClon } from '../../constants/axiosResponse';
-
 import axios from 'axios';
+import InvoiceService from "../../helpers/Invoices.service.helper";
 
 
 // SET SELECTED INVOICE
@@ -128,42 +128,48 @@ function isSupplierValid(cuitEmisor) {
 }
 
 //GET ALL PENDING INVOICES
-export function getAllPendingInvoices(cuit) {
+export function getAllPendingInvoices(cuit,per_page,page,search_params) {
 
 
     //MOCK DATOS
-
+    
     return new Promise((resolve, reject) => {
-        allPendingClon.data.data.arrayComprobantes.forEach((e, index) => {
-            if (e.estado.estado != "Pendiente Recepción" && e.estado.estado != "Pendiente" && e.estado.estado != "Recepcionado") {
-                e.StatusHistory = [
-                    {
-                        "Usuario": "Pedro " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Recepcionado"
-                    },
-                    {
-                        "Usuario": "Maria " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Aceptado"
-                    },
-                    {
-                        "Usuario": "Jose " + index,
-                        "Fecha cambio": "2019-09-17T00:00:00",
-                        "Nuevo Estado": "Rechazado"
-                    },
-                ]
-            } else {
-                e.StatusHistory = [];
-            }
-            isSupplierValid(e)
-            .then(isSuppplier =>{
-                 e.isSupplierValid = isSuppplier
-            })
-        })
-        resolve(allPendingClon)
-    })
+        const response = new InvoiceService();
+        
+        response.getInvoices(per_page , page , search_params).then(res =>{
 
+            res.data.forEach((e, index) => {
+                if (e.estado.estado != "Pendiente Recepción" && e.estado.estado != "Pendiente" && e.estado.estado != "Recepcionado") {
+                    e.StatusHistory = [
+                        {
+                            "Usuario": "Pedro " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Recepcionado"
+                        },
+                        {
+                            "Usuario": "Maria " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Aceptado"
+                        },
+                        {
+                            "Usuario": "Jose " + index,
+                            "Fecha cambio": "2019-09-17T00:00:00",
+                            "Nuevo Estado": "Rechazado"
+                        },
+                    ]
+                } else {
+                    e.StatusHistory = [];
+                }
+                isSupplierValid(e)
+                .then(isSuppplier =>{
+                     e.isSupplierValid = isSuppplier
+                })
+            })
+            resolve(res)     
+        })
+    })
+     
+    // SOLUTION 
 
     /*     return new Promise((resolve,reject)=>{
           axios.get(`api/AFIP/GetAllPendingInvoices/${cuit}`)
