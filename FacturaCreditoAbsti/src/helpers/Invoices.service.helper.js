@@ -15,7 +15,7 @@ export default class InvoiceService {
     getInvoices(rowsPerPage = 5, page = 1, searchValues) {
        return new Promise ((resolve,reject)=>{
         let data = [];
-debugger
+
         if (searchValues != null) {
             let searchInputs = Object.keys(searchValues);
             this.pendingVoices.data.data.arrayComprobantes.forEach(invoice => {
@@ -26,7 +26,7 @@ debugger
                         fechaInputs++
                      }
                     if (e != "tipoFecha" && e != "desde" && e != "hasta") {
-                        debugger
+                        
                         if (e == "estado") {
                             return invoice.estado.estado.toString().toLowerCase().includes(searchValues[e].toLowerCase().trim()) ? match++ : "";
                         } else {

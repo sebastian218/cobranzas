@@ -5,6 +5,7 @@ import appReducer from './app.reducer';
 import errorsReducer from './errors.reducer';
 import messagesReducer from './messages.reducer';
 import tableParamsReducer from './tableParams.reducer';
+import cuitsReducer from './cuits.reducers';
 
 
 
@@ -15,7 +16,8 @@ export default combineReducers({
              appReducer,
              errorsReducer,
              messagesReducer,
-             tableParamsReducer
+             tableParamsReducer,
+             cuitsReducer
              
 });
 

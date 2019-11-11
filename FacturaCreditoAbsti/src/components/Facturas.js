@@ -42,7 +42,8 @@ class Facturas extends React.Component {
             documentosAsociados: [],
             totalPages: 0,
             searchParams:null,
-            amountPerPage: 5
+            amountPerPage: 5,
+            selectedPage: 1
 
         }
 
@@ -59,6 +60,7 @@ class Facturas extends React.Component {
         this.paginationChange = this.paginationChange.bind(this);
         this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
         this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
+        this.getPaginationParams = this.getPaginationParams.bind(this)
        
     }
 
@@ -189,30 +191,39 @@ class Facturas extends React.Component {
         const {searchParams, amountPerPage} = this.state;
         this.setState((state)=>({...state, searchParams: e}))
         getAllPendingInvoices(null, amountPerPage, 1, e).then(res => {
-            console.log("RESPUESTA PAGINADO",res)
             this.setState((state) => ({ ...state, totalPages: res.total_pages}));
             this.props.setFilteredPendingInvoices(res.data);
         }) 
     }
+    
     paginationChange(page){
-        console.log("FACTURAS RECIBE PAGE", page )
+        
         const {searchParams, amountPerPage} = this.state;
+        this.setState((state)=>({...state, selectedPage: page}))
         getAllPendingInvoices(null,amountPerPage, page, searchParams).then(res => {
-            console.log("RESPUESTA PAGINADO",res)
+
             this.setState((state) => ({ ...state, totalPages: res.total_pages}));
             this.props.setFilteredPendingInvoices(res.data);
         }) 
     }
+
     handleAmountPagesChange(e){
         const {searchParams} = this.state;
         let perPage = Number(e.target.value)
         this.setState((state)=>({...state, amountPerPage:perPage}))
         getAllPendingInvoices(null,perPage, 1, searchParams).then(res => {
-            console.log("RESPUESTA PAGINADO",res)
             this.setState((state) => ({ ...state, totalPages: res.total_pages}));
             this.props.setFilteredPendingInvoices(res.data);
         }) 
 
+    }
+    getPaginationParams(){
+        const {searchParams,amountPerPage,selectedPage} = this.state;
+            return {
+                 searchParams: searchParams,
+                 per_page: amountPerPage,
+                 page: selectedPage
+            }
     }
     cancelInvoice() {
 
@@ -225,8 +236,8 @@ class Facturas extends React.Component {
             <div >
                 {loading ? <LoadingScreen /> : ''}
                 <div>
-                    {this.props.showActions ? <div><AceptacionForm cuit={this.props.cuit} open={openAcceptForm} handleClose={(close) => this.closeAcceptForm(close)} /> <RejectForm cuit={this.props.cuit} handleClose={this.closeRejectForm} actionType={rejectType} open={openRejectForm} /> </div> : ""}
-                    {historyData != "" ? <StatusHistory open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
+                    {this.props.showActions ? <div><AceptacionForm paginationParms={this.getPaginationParams()} cuit={this.props.cuit} open={openAcceptForm} handleClose={(close) => this.closeAcceptForm(close)} /> <RejectForm paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectForm} actionType={rejectType} open={openRejectForm} /> </div> : ""}
+                    {historyData != "" ? <StatusHistory  open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
                 </div>
                 <div className="p-1">
                 <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
@@ -257,7 +268,7 @@ class Facturas extends React.Component {
                     <tbody id="wrapper">{this.props.facturas.map((item, key) => (
                         <Fragment>
                             <tr key={'' + key} style={{ backgroundColor: item.isSupplierValid ? "rgba(240,128,128,0.3)" : "" }}>
-                                <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="30px" src="./Spinner.svg" /> : <img  className={" "+(item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="20px" src="./up-chevron.svg" />}  </td>
+                                <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="30px" src="./Spinner.svg" /> : <img  className={" "+(item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="30px" src="./up-chevron.svg" />}  </td>
                                 <td>{item.cuitEmisor}</td>
                                 <td>{item.razonSocialEmi}</td>
                                 <td>{item.codTipoCmp}</td>

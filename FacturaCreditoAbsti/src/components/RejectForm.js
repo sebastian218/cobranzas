@@ -34,7 +34,7 @@ class RejectForm extends React.Component {
     }
 
     componentDidMount() {
-
+       
         //SOLUTION
         /*         switch (this.props.actionType) {
                     case "C":
@@ -93,6 +93,7 @@ class RejectForm extends React.Component {
         this.setState({ loading: true })
         const { cuitEmisor, codTipoCmp, ptovta, nroCmp } = this.props.invoiceReducer.selectedInvoice;
         const { rejectCause, rejectDesc } = this.state;
+        const {paginationParams} = this.props;
 
         let requestBody = {
             cuit: this.props.cuit,
@@ -107,13 +108,13 @@ class RejectForm extends React.Component {
 
         this.rejectCancelInvoice(requestBody)
             .then(() => {
-
-                getAllPendingInvoices(this.props.cuit)
+                //MOCK PARA CANCELACIÓN Y RACHAZO --- 
+                getAllPendingInvoices(this.props.cuit,paginationParams.per_page,paginationParams.page,paginationParams.searchParams)
                     .then(response => {
 
-                        let comprobantes = response.data.data.arrayComprobantes.filter((comprobante) => comprobante.cuitEmisor != cuitEmisor);
+                        let comprobantes = response.data.filter((comprobante) => comprobante.cuitEmisor != cuitEmisor);
                         if (this.props.actionType == "C") {
-                            comprobantes = response.data.data.arrayComprobantes
+                            comprobantes = response.data
                         }
 
                         this.props.setAllPendingInvoices(comprobantes)
@@ -135,7 +136,9 @@ class RejectForm extends React.Component {
                 //obtener Comprobantes para ese cuit nuevamente 
                 this.setState({ loading: false })
                 this.props.actionType == "C" ? this.props.createAlert("Error de servidor, vuelva a intentarlo mas tarde", ERROR) : this.props.createAlert("Factura rechazada", SUCCESS);
+               // END MOCK
 
+               
                 this.handleClose()
             })
 
@@ -164,6 +167,8 @@ class RejectForm extends React.Component {
     }
 
     rejectCancelInvoice(requestBody) {
+
+        // MOCK
         return new Promise((resolve, reject) => {
 
             setTimeout(() => {
@@ -171,6 +176,7 @@ class RejectForm extends React.Component {
             }, 2000)
 
         })
+        // SOLUTION
         /*   return new Promise((resolve, reject) => {
               console.log(this.getRejectCancelEndpoint())
               axios.post(this.getRejectCancelEndpoint(), requestBody)

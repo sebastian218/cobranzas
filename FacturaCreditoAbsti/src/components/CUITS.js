@@ -14,6 +14,7 @@ import { setAllInvoices, setAllPendingInvoices, getAllInvoices, getAllPendingInv
 import { createMessage } from '../redux/actions/alerts.actions'
 import { SUCCESS } from '../constants/alertsTypes'
 import LoadingScreen from './shared/LoadingScreen'
+import { setCuit } from '../redux/actions/cuits.actions'
 
 
 class Cuits extends React.Component {
@@ -55,7 +56,7 @@ class Cuits extends React.Component {
         this.isLoading(true);
         return new Promise((resolve, reject) => {
             this.setState({ selectedCuit: cuit, selectedName: name });
-
+            this.props.setSelectedCuit(cuit);
             getAllPendingInvoices(cuit)
                 .then(response => {
                     this.props.setAllPendingInvoices(response.data)
@@ -216,7 +217,8 @@ const mapDispatchToProps = (dispatch) => {
         checkConnections: () => { return checkConnection(dispatch) },
         setAllInvoices: (data) => { dispatch(setAllInvoices(data)) },
         setAllPendingInvoices: (data) => { dispatch(setAllPendingInvoices(data)) },
-        createAlert: (msg, type) => { dispatch(createMessage(msg, type)) }
+        createAlert: (msg, type) => { dispatch(createMessage(msg, type)) },
+        setSelectedCuit: (cuit) => {dispatch(setCuit(cuit))}
     }
 }
 

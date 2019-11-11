@@ -227,6 +227,7 @@ class CuentasCorrientes extends React.Component {
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
+                {historyData != "" ? <StatusHistory open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
                 <div className="p-1">
                 <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
                 <Filters emitSearchValues={(e)=>{this.getSearchValues(e)}} />
@@ -234,7 +235,7 @@ class CuentasCorrientes extends React.Component {
                 <table className="table mt-3 table-sm tabla-facturas">
                     <thead className="bg-lightGrey">
                         <tr >
-                            <th className="bt-none"></th>
+                           
                             <th className="bt-none">CUIT Emisor</th>
                             <th className="bt-none">Razón Social</th>
                             <th className="bt-none">Tipo Doc.</th>
@@ -249,8 +250,6 @@ class CuentasCorrientes extends React.Component {
                             <th className="bt-none">Fecha Vto</th>
                             <th className="bt-none">Fecha Vto Acept</th>
                             <th className="bt-none">CAE</th>
-                            <th className="bt-none"></th>
-                            <th className="bt-none"></th>
                         </tr>
                     </thead>
                     <tbody id="wrapper">{this.props.facturas.map((item, key) => (
