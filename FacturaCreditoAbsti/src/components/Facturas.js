@@ -18,6 +18,7 @@ import { tiposFCE } from '../constants/tiposFCE';
 import TablePagination from './shared/TablePagination';
 import ReactPaginate from 'react-paginate';
 import InvoiceService from '../helpers/Invoices.service.helper';
+import RejectAsocDocs from './RejectAsocDocs';
 
 
 
@@ -36,10 +37,12 @@ class Facturas extends React.Component {
             openRejectForm: false,
             openStatusHistory: false,
             openAcceptForm: false,
+            openRejectAsocDoc: false,
             rejectType: "",
             historyData: "",
             selectedInvoice: {},
             documentosAsociados: [],
+            selectedAsocDoc: null,
             totalPages: 0,
             searchParams: null,
             amountPerPage: 5,
@@ -60,7 +63,9 @@ class Facturas extends React.Component {
         this.paginationChange = this.paginationChange.bind(this);
         this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
         this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
-        this.getPaginationParams = this.getPaginationParams.bind(this)
+        this.getPaginationParams = this.getPaginationParams.bind(this);
+        this.handleRejectAsocDocs = this.handleRejectAsocDocs.bind(this);
+        this.closeRejectAsocDocs = this.closeRejectAsocDocs.bind(this);
 
     }
 
@@ -225,17 +230,24 @@ class Facturas extends React.Component {
             page: selectedPage
         }
     }
+    handleRejectAsocDocs(doc) {
+        this.setState((state) => ({ ...state, selectedAsocDoc: doc, openRejectAsocDoc: true }))
+    }
+    closeRejectAsocDocs() {
+        this.setState((state) => ({ ...state, openRejectAsocDoc: false }))
+    }
     cancelInvoice() {
 
     }
 
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage } = this.state;
+        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage, selectedAsocDoc, openRejectAsocDoc } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
                 <div>
+                    <RejectAsocDocs nota={selectedAsocDoc} paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectAsocDocs} open={openRejectAsocDoc} actionType={"C"} />
                     {this.props.showActions ? <div><AceptacionForm paginationParms={this.getPaginationParams()} cuit={this.props.cuit} open={openAcceptForm} handleClose={(close) => this.closeAcceptForm(close)} /> <RejectForm paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectForm} actionType={rejectType} open={openRejectForm} /> </div> : ""}
                     {historyData != "" ? <StatusHistory open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
                 </div>
@@ -321,7 +333,7 @@ class Facturas extends React.Component {
                                                                         <td>{doc.estado.estado}</td>
 
                                                                         <td >
-                                                                            <Actions showReject={true} openReject={() => this.handleOpenRejectForm(doc, 'R')} />
+                                                                            <Actions showReject={true} openReject={() => this.handleRejectAsocDocs(doc)} />
                                                                         </td>
 
                                                                     </tr>
