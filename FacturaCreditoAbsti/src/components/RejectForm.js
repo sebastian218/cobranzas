@@ -124,9 +124,9 @@ class RejectForm extends React.Component {
                         //do things with error
                     })
 
-                getAllInvoices(this.props.cuit)
+                getAllInvoices(this.props.cuit,5,1,null)
                     .then(response => {
-                        this.props.setAllInvoices(response.data.data.arrayComprobantes)
+                        this.props.setAllInvoices(response.data)
 
                     })
                     .catch(error => {
@@ -138,7 +138,7 @@ class RejectForm extends React.Component {
                 this.props.actionType == "C" ? this.props.createAlert("Error de servidor, vuelva a intentarlo mas tarde", ERROR) : this.props.createAlert("Factura rechazada", SUCCESS);
                // END MOCK
 
-               
+
                 this.handleClose()
             })
 

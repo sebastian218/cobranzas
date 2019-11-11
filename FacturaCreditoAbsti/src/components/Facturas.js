@@ -298,14 +298,14 @@ class Facturas extends React.Component {
                                                         <table className="table table-sm tabla-facturas ">
                                                             <thead>
                                                                 <tr>
-                                                                    <th scope="col">Tipo Doc</th>
-                                                                    <th scope="col">Pto.Vta.</th>
-                                                                    <th scope="col">Número</th>
-                                                                    <th scope="col">Importe</th>
-                                                                    <th scope="col">Moneda</th>
-                                                                    <th scope="col">Cotización</th>
-                                                                    <th scope="col">Estado</th>
-                                                                    <th></th>
+                                                                    <th className="border-0" scope="col">Tipo Doc</th>
+                                                                    <th className="border-0" scope="col">Pto.Vta.</th>
+                                                                    <th className="border-0" scope="col">Número</th>
+                                                                    <th className="border-0" scope="col">Importe</th>
+                                                                    <th className="border-0" scope="col">Moneda</th>
+                                                                    <th className="border-0" scope="col">Cotización</th>
+                                                                    <th className="border-0" scope="col">Estado</th>
+                                                                    <th className="border-0" ></th>
 
                                                                 </tr>
                                                             </thead>
