@@ -65,7 +65,13 @@ class Facturas extends React.Component {
     componentDidMount(){
         const{amount_pages} = this.props;
         this.setState((state) => ({ ...state, totalPages: amount_pages}));
-    }  
+    }
+    componentDidUpdate(prevProps){
+        const {cuit,amount_pages} = this.props;
+        if(prevProps.cuit != cuit){
+             this.setState((state)=>({...state, searchParams: null, amountPerPage: 5,totalPages: amount_pages}));
+        }
+   }  
 
     handleOpenRejectForm(item, actionType) {
         this.createDetalle(item);
@@ -214,7 +220,7 @@ class Facturas extends React.Component {
   
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading,totalPages } = this.state;
+        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading,totalPages, amountPerPage } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
@@ -325,7 +331,7 @@ class Facturas extends React.Component {
                 
                 <div className="d-flex justify-content-between p-1">
                     <div className="form-group">
-                        <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPagesChange} >
+                        <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPagesChange} value={amountPerPage} >
                             <option value={5}>5</option>
                             <option value={10}>10</option>
                             <option value={20}>20</option>

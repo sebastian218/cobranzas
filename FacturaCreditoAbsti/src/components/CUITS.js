@@ -144,12 +144,11 @@ class Cuits extends React.Component {
                                 />
                             </Tab>
                             <Tab eventKey="cuentasCorrientes" title="Cuentas Corrientes">
-                                <Facturas
+                                <CuentasCorrientes
                                     facturas={this.props.invoiceReducer.allInvoices}
                                     cuit={selectedCuit}
                                     rznSocial={selectedName}
                                     obs={this.state.error}
-                                    showActions={false}
                                 />
                             </Tab>
                         </Tabs>
