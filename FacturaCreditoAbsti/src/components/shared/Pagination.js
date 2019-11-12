@@ -41,27 +41,15 @@ class Pagination extends Component {
 
   componentDidMount() {
     this.gotoPage(1);
-    let pages = this.fetchPageNumbers();
-    this.setState((state)=>({...state, pages: pages}));
   }
   componentDidUpdate(prevProps){
     
-    const { totalRecords = null, pageLimit = 30, pageNeighbours = 0 } = this.props;
+    const { totalRecords, pageLimit} = this.props;
         if(JSON.stringify(prevProps) != JSON.stringify(this.props) ){
           
-
-          this.pageLimit = typeof pageLimit === 'number' ? pageLimit : 30;
-          this.totalRecords = typeof totalRecords === 'number' ? totalRecords : 0;
-      
-          // pageNeighbours can be: 0, 1 or 2
-          this.pageNeighbours = typeof pageNeighbours === 'number'
-            ? Math.max(0, Math.min(pageNeighbours, 2))
-            : 0;
-      
+          this.pageLimit = pageLimit;
+          this.totalRecords = totalRecords;     
           this.totalPages = Math.ceil(this.totalRecords / this.pageLimit);
-          
-          let pages = this.fetchPageNumbers();
-          this.setState((state)=>({...state, pages: pages}));
           this.gotoPage(1);
         }
   }
@@ -171,8 +159,8 @@ class Pagination extends Component {
 
     if (!this.totalRecords || this.totalPages === 1) return null;
 
-    const { currentPage, pages } = this.state;
-    
+    const { currentPage } = this.state;
+    const pages = this.fetchPageNumbers();
 
     return (
       <Fragment>
