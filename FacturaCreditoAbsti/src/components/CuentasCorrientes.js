@@ -12,12 +12,12 @@ import StatusHistory from './StatusHistory';
 import AceptacionForm from './Aceptacion/AceptacionForm';
 import LoadingScreen from './shared/LoadingScreen';
 import { getOnlyAsociatedDocuments } from '../constants/axiosResponse';
-import Pagination from 'react-bootstrap/Pagination';
 import PageItem from 'react-bootstrap/PageItem';
 import { tiposFCE } from '../constants/tiposFCE';
 import TablePagination from './shared/TablePagination';
 import ReactPaginate from 'react-paginate';
 import InvoiceService from '../helpers/Invoices.service.helper';
+import Pagination from './shared/Pagination';
 
 
 
@@ -42,68 +42,37 @@ class CuentasCorrientes extends React.Component {
             documentosAsociados: [],
             totalPages: 0,
             searchParams: null,
-            amountPerPage: 5
+            amountPerPage: 5,
+            selectedPage: 1,
+            totalInvoices:0
 
         }
 
 
 
 
-        this.handleOpenRejectForm = this.handleOpenRejectForm.bind(this);
-        this.closeRejectForm = this.closeRejectForm.bind(this);
+        
+        
         this.openStatusHistory = this.openStatusHistory.bind(this);
         this.closeStatusHistory = this.closeStatusHistory.bind(this);
-        this.openAcceptForm = this.openAcceptForm.bind(this);
-        this.closeAcceptForm = this.closeAcceptForm.bind(this);
         this.exportToXLS = this.exportToXLS.bind(this);
         this.paginationChange = this.paginationChange.bind(this);
-        this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
         this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
 
     }
 
     componentDidMount() {
-        const { amount_pages } = this.props;
-        this.setState((state) => ({ ...state, totalPages: amount_pages }));
+        const { amount_pages,totalInvoices } = this.props;
+        debugger
+        this.setState((state) => ({ ...state, totalPages: amount_pages,totalInvoices:totalInvoices }));
     }
     componentDidUpdate(prevProps) {
-        const { cuit, amount_pages } = this.props;
+        const { cuit, amount_pages,totalInvoices } = this.props;
         if (prevProps.cuit != cuit) {
-            this.setState((state) => ({ ...state, searchParams: null, amountPerPage: 5, totalPages: amount_pages }));
+            this.setState((state) => ({ ...state, searchParams: null, amountPerPage: 5, totalPages: amount_pages, totalInvoices:totalInvoices }));
         }
     }
 
-    handleOpenRejectForm(item, actionType) {
-        this.createDetalle(item);
-        this.setState({ openRejectForm: true, rejectType: actionType })
-    }
-    createDetalle(item) {
-        let detalle = {
-            razonSocialEmi: {
-                col: "Razon Social",
-                data: item.razonSocialEmi
-            },
-            importeTotal: {
-                col: "Importe Toal",
-                data: item.importeTotal
-            },
-            codMoneda: {
-                col: "Moneda",
-                data: item.codMoneda
-            },
-            referenciasComerciales: {
-                col: "Concepto",
-                data: item.referenciasComerciales
-            },
-        };
-
-        let data = {
-            item,
-            detalle
-        }
-
-        this.props.setSelectedInvoice(data)
-    }
     exportToXLS() {
         this.setState({ loading: true })
         setTimeout(() => {
@@ -120,26 +89,12 @@ class CuentasCorrientes extends React.Component {
                 }) */
 
     }
-    openAcceptForm(item) {
-        this.createDetalle(item);
-        this.setState({ openAcceptForm: true })
-    }
     openStatusHistory(data) {
         this.setState({ historyData: data })
         this.setState({ openStatusHistory: true });
     }
     closeStatusHistory() {
         this.setState({ openStatusHistory: false });
-    }
-
-    closeRejectForm() {
-        this.setState({ openRejectForm: false })
-    }
-    closeAcceptForm(close) {
-
-        this.setState({ openAcceptForm: false })
-
-
     }
 
     getXLS() {
@@ -154,44 +109,14 @@ class CuentasCorrientes extends React.Component {
                 })
         })
     }
-    async handleComprobantesAsoc(invoice) {
 
-        const { selectedInvoiceCuit } = this.state;
-
-        /* await this.setState((state) => ({ ...state,  selectedInvoiceCuit: invoice.cuitEmisor })); */
-
-        this.createDetalle(invoice);
-
-        if (selectedInvoiceCuit !== invoice.cuitEmisor) {
-            this.setState((state) => ({ ...state, selectedInvoiceCuit: invoice.cuitEmisor, detalleLoading: true }));
-            this.getAsociatedDocs()
-                .then(res => {
-                    this.setState({ documentosAsociados: res, detalleLoading: false });
-
-                    console.log(this.state);
-
-                })
-        } else {
-            this.setState((state) => ({ ...state, selectedInvoiceCuit: "" }));
-        }
-
-
-    }
-    getAsociatedDocs() {
-        // MOCK
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve(getOnlyAsociatedDocuments.data.arrayComprobantes)
-            }, 2000)
-        })
-    }
     getSearchValues(e) {
         const { searchParams, amountPerPage } = this.state;
         this.setState((state) => ({ ...state, searchParams: e }))
         //GET ALL INVOICES
         getAllInvoices(null, amountPerPage, 1, e).then(res => {
             console.log("RESPUESTA PAGINADO", res)
-            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setAllInvoices(res.data);
         })
     }
@@ -212,7 +137,7 @@ class CuentasCorrientes extends React.Component {
         //GET ALL INVOICES
         getAllInvoices(null, perPage, 1, searchParams).then(res => {
             console.log("RESPUESTA PAGINADO", res)
-            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setAllInvoices(res.data);
         })
 
@@ -223,7 +148,7 @@ class CuentasCorrientes extends React.Component {
 
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage } = this.state;
+        const {  openStatusHistory, historyData, loading, detalleLoading, totalPages, amountPerPage, selectedAsocDoc, openRejectAsocDoc,totalInvoices } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
@@ -289,7 +214,7 @@ class CuentasCorrientes extends React.Component {
                         </select>
                     </div>
                     <div className="">
-                        <TablePagination amountPages={totalPages} selectionChanges={(e) => this.paginationChange(e)} />
+                    {totalInvoices > 0?<Pagination totalRecords={totalInvoices} pageLimit={amountPerPage} pageNeighbours={1} onPageChanged={(data)=>this.paginationChange(data)} /> : ""} 
                     </div>
                 </div>
             </div>

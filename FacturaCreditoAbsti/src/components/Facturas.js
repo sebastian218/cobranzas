@@ -12,13 +12,13 @@ import StatusHistory from './StatusHistory';
 import AceptacionForm from './Aceptacion/AceptacionForm';
 import LoadingScreen from './shared/LoadingScreen';
 import { getOnlyAsociatedDocuments } from '../constants/axiosResponse';
-import Pagination from 'react-bootstrap/Pagination';
 import PageItem from 'react-bootstrap/PageItem';
 import { tiposFCE } from '../constants/tiposFCE';
 import TablePagination from './shared/TablePagination';
 import ReactPaginate from 'react-paginate';
 import InvoiceService from '../helpers/Invoices.service.helper';
 import RejectAsocDocs from './RejectAsocDocs';
+import Pagination from './shared/Pagination';
 
 
 
@@ -46,7 +46,8 @@ class Facturas extends React.Component {
             totalPages: 0,
             searchParams: null,
             amountPerPage: 5,
-            selectedPage: 1
+            selectedPage: 1,
+            totalInvoices:0
 
         }
 
@@ -66,17 +67,18 @@ class Facturas extends React.Component {
         this.getPaginationParams = this.getPaginationParams.bind(this);
         this.handleRejectAsocDocs = this.handleRejectAsocDocs.bind(this);
         this.closeRejectAsocDocs = this.closeRejectAsocDocs.bind(this);
-
+        
     }
 
     componentDidMount() {
-        const { amount_pages } = this.props;
-        this.setState((state) => ({ ...state, totalPages: amount_pages }));
+        const { amount_pages,totalInvoices } = this.props;
+        debugger
+        this.setState((state) => ({ ...state, totalPages: amount_pages,totalInvoices:totalInvoices }));
     }
     componentDidUpdate(prevProps) {
-        const { cuit, amount_pages } = this.props;
+        const { cuit, amount_pages,totalInvoices } = this.props;
         if (prevProps.cuit != cuit) {
-            this.setState((state) => ({ ...state, searchParams: null, amountPerPage: 5, totalPages: amount_pages }));
+            this.setState((state) => ({ ...state, searchParams: null, amountPerPage: 5, totalPages: amount_pages, totalInvoices:totalInvoices }));
         }
     }
 
@@ -196,18 +198,7 @@ class Facturas extends React.Component {
         const { searchParams, amountPerPage } = this.state;
         this.setState((state) => ({ ...state, searchParams: e }))
         getAllPendingInvoices(null, amountPerPage, 1, e).then(res => {
-            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
-            this.props.setFilteredPendingInvoices(res.data);
-        })
-    }
-
-    paginationChange(page) {
-
-        const { searchParams, amountPerPage } = this.state;
-        this.setState((state) => ({ ...state, selectedPage: page }))
-        getAllPendingInvoices(null, amountPerPage, page, searchParams).then(res => {
-
-            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setFilteredPendingInvoices(res.data);
         })
     }
@@ -217,7 +208,7 @@ class Facturas extends React.Component {
         let perPage = Number(e.target.value)
         this.setState((state) => ({ ...state, amountPerPage: perPage }))
         getAllPendingInvoices(null, perPage, 1, searchParams).then(res => {
-            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setFilteredPendingInvoices(res.data);
         })
 
@@ -239,10 +230,20 @@ class Facturas extends React.Component {
     cancelInvoice() {
 
     }
+    paginationChange(data){
+        console.log("PAGINATION 2" , data)
+        const { searchParams, amountPerPage } = this.state;
+        this.setState((state) => ({ ...state, selectedPage: data.currentPage }))
+        getAllPendingInvoices(null, amountPerPage, data.currentPage, searchParams).then(res => {
+
+            this.setState((state) => ({ ...state, totalPages: res.total_pages }));
+            this.props.setFilteredPendingInvoices(res.data);
+        })
+    }
 
 
     render() {
-        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage, selectedAsocDoc, openRejectAsocDoc } = this.state;
+        const { openRejectForm, rejectType, openStatusHistory, historyData, openAcceptForm, loading, documentosAsociados, selectedInvoiceCuit, detalleLoading, totalPages, amountPerPage, selectedAsocDoc, openRejectAsocDoc,totalInvoices } = this.state;
         return (
             <div >
                 {loading ? <LoadingScreen /> : ''}
@@ -365,11 +366,13 @@ class Facturas extends React.Component {
                             <option value={20}>20</option>
                         </select>
                     </div>
-                    <div className="">
-                        <TablePagination amountPages={totalPages} selectionChanges={(e) => this.paginationChange(e)} />
+                    <div >
+                    {totalInvoices > 0?<Pagination totalRecords={totalInvoices} pageLimit={amountPerPage} pageNeighbours={1} onPageChanged={(data)=>this.paginationChange(data)} /> : ""} 
                     </div>
+
                 </div>
             </div>
+            
         )
     }
 }
