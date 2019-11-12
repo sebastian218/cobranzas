@@ -45,19 +45,12 @@ class CuentasCorrientes extends React.Component {
             selectedPage: 1,
             totalInvoices:0
 
-        }
-
-
-
-
-        
-        
+        }        
         this.openStatusHistory = this.openStatusHistory.bind(this);
         this.closeStatusHistory = this.closeStatusHistory.bind(this);
         this.exportToXLS = this.exportToXLS.bind(this);
         this.paginationChange = this.paginationChange.bind(this);
         this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
-
     }
 
     componentDidMount() {
@@ -112,19 +105,15 @@ class CuentasCorrientes extends React.Component {
     getSearchValues(e) {
         const { searchParams, amountPerPage } = this.state;
         this.setState((state) => ({ ...state, searchParams: e }))
-        //GET ALL INVOICES
         getAllInvoices(null, amountPerPage, 1, e).then(res => {
-            console.log("RESPUESTA PAGINADO", res)
             this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setAllInvoices(res.data);
         })
     }
-    paginationChange(page) {
-        console.log("FACTURAS RECIBE PAGE", page)
+    paginationChange(data) {
         const { searchParams, amountPerPage } = this.state;
-        //GET ALL INVOICES
-        getAllInvoices(null, amountPerPage, page, searchParams).then(res => {
-            console.log("RESPUESTA PAGINADO", res)
+        this.setState((state) => ({ ...state, selectedPage: data.currentPage }))
+        getAllInvoices(null, amountPerPage, data.currentPage, searchParams).then(res => {
             this.setState((state) => ({ ...state, totalPages: res.total_pages }));
             this.props.setAllInvoices(res.data);
         })
@@ -133,9 +122,7 @@ class CuentasCorrientes extends React.Component {
         const { searchParams } = this.state;
         let perPage = Number(e.target.value)
         this.setState((state) => ({ ...state, amountPerPage: perPage }))
-        //GET ALL INVOICES
         getAllInvoices(null, perPage, 1, searchParams).then(res => {
-            console.log("RESPUESTA PAGINADO", res)
             this.setState((state) => ({ ...state, totalPages: res.total_pages, totalInvoices: res.total }));
             this.props.setAllInvoices(res.data);
         })
