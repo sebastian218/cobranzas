@@ -14,7 +14,6 @@ import LoadingScreen from './shared/LoadingScreen';
 import { getOnlyAsociatedDocuments } from '../constants/axiosResponse';
 import PageItem from 'react-bootstrap/PageItem';
 import { tiposFCE } from '../constants/tiposFCE';
-import TablePagination from './shared/TablePagination';
 import ReactPaginate from 'react-paginate';
 import InvoiceService from '../helpers/Invoices.service.helper';
 import RejectAsocDocs from './RejectAsocDocs';
