@@ -277,7 +277,7 @@ class Facturas extends React.Component {
                                     <th className="bt-none"></th>
                                 </tr>
                             </thead>
-                            {this.props.facturas.length == 0 ? <tbody><tr><td colSpan={17}><strong>No se ecnotraron resultados</strong></td></tr></tbody> :
+                            {this.props.facturas.length == 0 ? <tbody><tr><td colSpan={17} className="text-center p-3" ><strong>No se ecnotraron resultados</strong></td></tr></tbody> :
 
                                 <tbody id="wrapper">{this.props.facturas.map((item, key) => (
                                     <Fragment>
