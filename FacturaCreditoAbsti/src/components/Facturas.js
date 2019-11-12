@@ -303,11 +303,11 @@ class Facturas extends React.Component {
                                         </tr >
                                         {item.cuitEmisor == selectedInvoiceCuit && !detalleLoading ?
 
-                                            <tr id={item.cuitEmisor} ref={this.state.content} className=" p-0 " >
+                                            <tr id={item.cuitEmisor} ref={this.state.content} style={{backgroundColor:"#E8E8E8"}} className=" p-0 " >
                                                 <td colSpan={17} className="p-0">
                                                     <div className="x-auto ">
-                                                        <small className="text-secondary">Comprobantes Asociados a la factura de crédito</small>
-                                                        <table className="table table-sm tabla-facturas ">
+                                                        <small className="text-dark">Comprobantes Asociados a la factura de crédito</small>
+                                                        <table className="table table-borderless table-sm tabla-facturas ">
                                                             <thead>
                                                                 <tr>
                                                                     <th className="border-0" scope="col">Tipo Doc</th>
