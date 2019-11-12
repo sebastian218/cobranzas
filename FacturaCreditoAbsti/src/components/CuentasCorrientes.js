@@ -163,7 +163,7 @@ class CuentasCorrientes extends React.Component {
                                     <th className="bt-none">CAE</th>
                                 </tr>
                             </thead>
-                            {this.props.facturas.length == 0 ? <tbody><tr colSpan={14}><strong>No se encontraron resolutados</strong> </tr></tbody> :
+                            {this.props.facturas.length == 0 ? <tbody><tr><td colSpan={17}><strong>No se ecnotraron resultados</strong></td></tr></tbody> :
 
                                 <tbody id="wrapper">{this.props.facturas.map((item, key) => (
 
