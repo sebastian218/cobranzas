@@ -282,7 +282,7 @@ class Facturas extends React.Component {
                                 <tbody id="wrapper">{this.props.facturas.map((item, key) => (
                                     <Fragment>
                                         <tr key={'' + key} style={{ backgroundColor: item.isSupplierValid ? "rgba(240,128,128,0.3)" : "" }}>
-                                            <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="20px" src="./Spinner.svg" /> : <img className={" " + (item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="20px" src="./up-chevron.svg" />}  </td>
+                                            {item.estado.estado == 'Recepcionado' ? <td> {item.cuitEmisor == selectedInvoiceCuit && detalleLoading ? <img width="20px" src="./Spinner.svg" /> : <img className={" " + (item.cuitEmisor == selectedInvoiceCuit ? "rotateimg180" : "")} onClick={() => this.handleComprobantesAsoc(item)} style={{ cursor: "pointer" }} width="20px" src="./up-chevron.svg" />}  </td> :<td></td>} 
                                             <td>{item.cuitEmisor}</td>
                                             <td>{item.razonSocialEmi}</td>
                                             <td>{item.codTipoCmp}</td>
