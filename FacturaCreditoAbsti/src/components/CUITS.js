@@ -174,7 +174,7 @@ class Cuits extends React.Component {
             return (
 
                 <div>
-                    ESPERE....
+                    <strong >Espera, por favor....</strong> 
                 </div>
 
 

@@ -244,7 +244,7 @@ class Facturas extends React.Component {
             <div >
                 {loading ? <LoadingScreen /> : ''}
                 <div>
-                    <RejectAsocDocs nota={selectedAsocDoc} paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectAsocDocs} open={openRejectAsocDoc} actionType={"C"} />
+                    <RejectAsocDocs nota={selectedAsocDoc} paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectAsocDocs} open={openRejectAsocDoc} actionType={"R"} />
                     {this.props.showActions ? <div><AceptacionForm paginationParms={this.getPaginationParams()} cuit={this.props.cuit} open={openAcceptForm} handleClose={(close) => this.closeAcceptForm(close)} /> <RejectForm paginationParams={this.getPaginationParams()} cuit={this.props.cuit} handleClose={this.closeRejectForm} actionType={rejectType} open={openRejectForm} /> </div> : ""}
                     {historyData != "" ? <StatusHistory open={openStatusHistory} data={historyData} handleClose={this.closeStatusHistory} onClose={this.closeStatusHistory} /> : ""}
                 </div>
@@ -252,8 +252,8 @@ class Facturas extends React.Component {
                     <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
                     <Filters emitSearchValues={(e) => { this.getSearchValues(e) }} />
                    <div className="d-flex justify-content-start align-items-center">
-                       <div  style={{backgroundColor:"rgba(240,128,128,0.3)",padding:"10px",width:"10px",marginRight:"4px"}}></div><span>Documento no informado a superior</span>
-                   </div>
+                       <div  style={{backgroundColor:"rgba(240,128,128,0.3)",padding:"10px",width:"10px",marginRight:"4px"}}></div><small className="text-secondary">Documento no informado a superior</small> 
+                   </div> 
                     <div className="x-auto">
                         <table className="table mt-3 table-sm tabla-facturas">
                             <thead className="bg-lightGrey">
