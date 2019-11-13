@@ -55,7 +55,7 @@ class CuentasCorrientes extends React.Component {
 
     componentDidMount() {
         const { amount_pages,totalInvoices } = this.props;
-        debugger
+        
         this.setState((state) => ({ ...state, totalPages: amount_pages,totalInvoices:totalInvoices }));
     }
     componentDidUpdate(prevProps) {
@@ -142,6 +142,9 @@ class CuentasCorrientes extends React.Component {
                 <div className="p-1">
                     <h3 className="p-2 mt-3 d-flex align-items-center">Comprobantes para {this.props.rznSocial + " (" + this.props.cuit + ")"} <button onClick={() => this.exportToXLS()} className="btn  btn-sm" type="button"><img width="35" src="./excel.svg" /></button></h3>
                     <Filters emitSearchValues={(e) => { this.getSearchValues(e) }} />
+                    <div className="d-flex justify-content-start align-items-center">
+                       <div  style={{backgroundColor:"rgba(240,128,128,0.3)",padding:"10px",width:"10px",marginRight:"4px"}}></div><span>Documento no informado a superior</span>
+                   </div>
                     <div className="x-auto">
                         <table className="table mt-3 table-sm tabla-facturas">
                             <thead className="bg-lightGrey">

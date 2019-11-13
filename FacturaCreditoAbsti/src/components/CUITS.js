@@ -62,7 +62,7 @@ class Cuits extends React.Component {
             this.props.setSelectedCuit(cuit)
             getAllPendingInvoices(cuit)
                 .then(response => {
-                    debugger
+                    
                     this.props.setAllPendingInvoices(response.data)
                     this.setState((state)=> ({...state, pendientes: response.data, total_pend_pages: response.total_pages, total_pending_invoices: response.total }));
                     getAllInvoices(cuit)
