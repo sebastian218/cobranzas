@@ -1,10 +1,8 @@
 //@ts-check
 import React from 'react';
-import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Moment, { now } from 'moment';
@@ -15,12 +13,12 @@ import { onlyNumbres } from '../helpers/helpers';
 import { setAllInvoices, setAllPendingInvoices, setFilteredPendingInvoices, setFilteredInvoices } from '../redux/actions/invoice';
 import { createMessage } from '../redux/actions/alerts.actions';
 import { ALERT } from '../constants/alertsTypes';
-import InvoiceService from '../helpers/Invoices.service.helper';
+
 registerLocale('es', es)
 setDefaultLocale('es');
 
 
-const SELECCIONE = "Seleccionar...";
+
 const ESTADOPLACEHOLDER = "Estado";
 const FECHAPLACEHOLDER = "Tipo Fecha";
 class Filters extends React.Component {
@@ -48,25 +46,12 @@ class Filters extends React.Component {
 
     onSubmit = e => {
         e.preventDefault();
-        const { empresa, cuit, estado, tipoFecha, desde, hasta } = this.state;
-        const { allPendingInvoicesAux, allInvoicesAux } = this.props.invoiceReducer;
 
         if (!this.isInvalidForm()) {
 
             let searchValues = this.returnSearchInputs();
-            let searchInputs = Object.keys(searchValues);
-            let allPendingFiltered = [];
-            let allInvoicesFiltered = []
-            let searchvalsAux = {...searchValues};
-            searchvalsAux["desde"] =desde ;
-            searchvalsAux["hasta"]= hasta ;
-           
-            /* let serviceData = new InvoiceService().getInvoices(2, 1, searchvalsAux) */
-            this.props.emitSearchValues(searchvalsAux)
-            console.log("SEARCH VALUES EMITTER",searchvalsAux)
-            /* console.log(serviceData); */
-            /* this.props.setFilteredAllInvoices(allInvoicesFiltered); */
-            /* this.props.setFilteredPendingInvoices(serviceData.data); */
+            this.props.emitSearchValues(searchValues);
+            console.log("SEARCH VALUES EMITTER", searchValues);
         } else {
             this.props.createAlert("Debe ingresar un parametro de busqueda", ALERT);
         }
@@ -89,25 +74,16 @@ class Filters extends React.Component {
         if (tipoFecha != FECHAPLACEHOLDER) {
             search["tipoFecha"] = tipoFecha;
         }
+        if (desde != null) {
+            search["desde"] = desde;
+        }
+        if (hasta != null) {
+            search["hasta"] = desde;
+        }
+
         return search;
     }
 
-    isBetweenSelectedDates(fecha) {
-        
-        const { desde, hasta } = this.state;
-        let fechaAux = new Date(fecha);
-        if (hasta == null && desde == null) {
-            return true
-        } else if (hasta == null) {
-            return fechaAux >= desde
-        } else if (desde == null) {
-            return fechaAux <= hasta
-        }
-        else {
-            return fechaAux >= desde && fechaAux <= hasta
-        }
-
-    }
     isInvalidForm() {
         const { empresa, cuit, estado, tipoFecha, desde, hasta } = this.state;
         return empresa == "" && cuit == "" && estado == ESTADOPLACEHOLDER && tipoFecha == FECHAPLACEHOLDER && desde == null && hasta == null;
@@ -132,7 +108,6 @@ class Filters extends React.Component {
         })
     }
     handleLimpiar() {
-        const { allPendingInvoicesAux, allInvoicesAux } = this.props.invoiceReducer
 
         this.setState({
             empresa: "",
@@ -142,14 +117,9 @@ class Filters extends React.Component {
             desde: null,
             hasta: null,
         })
-       /*  let data = new InvoiceService().getInvoices(2, 1, null)
-        this.props.setAllPendingInvoices(data.data);
-        this.props.setAllInvoices(allInvoicesAux); */
-        
-        if(!this.isInvalidForm()){
+        if (!this.isInvalidForm()) {
             this.props.emitSearchValues(null)
         }
-        
 
     }
 
@@ -203,19 +173,19 @@ class Filters extends React.Component {
                             </div>
                         </Form.Group>
                         <Form.Group as={Col} md="1">
-                        <Button  variant="primary" type="submit" className="w-100">
-                            Buscar
+                            <Button variant="primary" type="submit" className="w-100">
+                                Buscar
                         </Button>
                         </Form.Group >
                         <Form.Group as={Col} md="1">
-                        <Button className="w-100" variant="outline-secondary" type="button" onClick={() => this.handleLimpiar()}>
-                            Limpiar
+                            <Button className="w-100" variant="outline-secondary" type="button" onClick={() => this.handleLimpiar()}>
+                                Limpiar
                         </Button>
                         </Form.Group >
-                        
+
 
                     </Form.Row>
-{/*                     <Row className="justify-content-md-end pb-0 pr-4 pl-4  pt-0">
+                    {/*                     <Row className="justify-content-md-end pb-0 pr-4 pl-4  pt-0">
 
                         <Button  variant="primary" type="submit" className="mr-2 btn btn-sm">
                             Buscar

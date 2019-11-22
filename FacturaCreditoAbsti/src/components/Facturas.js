@@ -62,7 +62,7 @@ class Facturas extends React.Component {
         this.exportToXLS = this.exportToXLS.bind(this);
         this.paginationChange = this.paginationChange.bind(this);
         this.handleComprobantesAsoc = this.handleComprobantesAsoc.bind(this);
-        this.handleAmountPagesChange = this.handleAmountPagesChange.bind(this);
+        this.handleAmountPerPagesChange = this.handleAmountPerPagesChange.bind(this);
         this.getPaginationParams = this.getPaginationParams.bind(this);
         this.handleRejectAsocDocs = this.handleRejectAsocDocs.bind(this);
         this.closeRejectAsocDocs = this.closeRejectAsocDocs.bind(this);
@@ -199,7 +199,7 @@ class Facturas extends React.Component {
         })
     }
 
-    handleAmountPagesChange(e) {
+    handleAmountPerPagesChange(e) {
         const { searchParams } = this.state;
         let perPage = Number(e.target.value)
         this.setState((state) => ({ ...state, amountPerPage: perPage }))
@@ -359,7 +359,7 @@ class Facturas extends React.Component {
 
                 <div className="d-flex justify-content-between p-1">
                     <div className="form-group">
-                        <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPagesChange} value={amountPerPage} >
+                        <select className="custom-select my-1 mr-sm-2" onChange={this.handleAmountPerPagesChange} value={amountPerPage} >
                             <option value={5}>5</option>
                             <option value={10}>10</option>
                             <option value={20}>20</option>
